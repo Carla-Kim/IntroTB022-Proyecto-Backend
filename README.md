@@ -26,7 +26,7 @@ Este ejercicio simula un escenario real de desarrollo backend:
 - Nicolás Agustín, West, nwest@fi.uba.ar, 115416.
 
 ## ¿Por qué decidimos ordenar las carpetas de esta forma?
-- En la carpeta app/, estarán todas las implementaciones de los enpoints pedidos (partidos, resultados, usuarios, predicciones, ranking, paginación) ordenados de tal forma en que respeten una arquitectura en capas (más información en docs/arquitectura.md). También por pedido del proyecto, se implementaran como buenas prácticaS el manejo de errores y las validaciones de datos.
+- En la carpeta app/, estarán todas las implementaciones de los enpoints pedidos (partidos, resultados, usuarios, predicciones, ranking, paginación) ordenados de tal forma en que respeten una arquitectura en capas (más información en docs/arquitectura.md). También por pedido del proyecto, se implementaran como buenas prácticas el manejo de errores y las validaciones de datos.
 
 > **app/**  
 > Carpeta principal del código de la aplicación. Contiene la inicialización, configuración y los módulos de cada funcionalidad.
