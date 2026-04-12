@@ -26,7 +26,7 @@ Este ejercicio simula un escenario real de desarrollo backend:
 - Nicolás Agustín, West, nwest@fi.uba.ar, 115416.
   
 ## Instrucciones de ejecución:
-TODO.
+TODO..
 
 ## Ejemplos de uso:
 TODO.
