@@ -1,0 +1,1 @@
+# from .model import COMPLETAR ACA CON LAS FUNCIONES DEL MODEL
