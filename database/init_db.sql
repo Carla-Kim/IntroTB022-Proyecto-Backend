@@ -37,20 +37,20 @@ INSERT INTO usuarios (nombre, email) VALUES
 ('Neithan Larez', 'nlarez@fi.uba.ar'),
 ('Nicolas West', 'nwest@fi.uba.ar');
 
-INSERT INTO partidos (equipo_local, equipo_visitante, fecha, fase) VALUES
-('Argentina',  'Francia',      '2026-06-15', 'grupos'),
-('Brasil',     'Alemania',     '2026-06-16', 'grupos'),
-('España',     'Portugal',     '2026-06-17', 'grupos'),
-('Argentina',  'Brasil',       '2026-07-04', 'cuartos'),
-('Francia',    'Alemania',     '2026-07-05', 'cuartos');
+INSERT INTO partidos (equipo_local, equipo_visitante, fecha, fase, resultados) VALUES
+('Argentina',  'Francia',      '2026-06-15', 'grupos', NULL),
+('Brasil',     'Alemania',     '2026-06-16', 'grupos', '{"local": 3, "visitante": 2}'),
+('España',     'Portugal',     '2026-06-17', 'grupos', '{"local": 0, "visitante": 1}'),
+('Argentina',  'Brasil',       '2026-07-04', 'cuartos', NULL),
+('Francia',    'Alemania',     '2026-07-05', 'cuartos', '{"local": 0, "visitante": 0}');
 
 
 INSERT INTO predicciones (id_usuario, id_partido, local, visitante) VALUES
-(1, 1, 3, 0), /*3 puntos resultado exacto */
-(2, 1, 2, 0), /*1 punto resultado correcto*/
-(3, 2, 0, 1), /*0 puntos resultado incorrecto*/
-(4, 3, 1, 1), /*3 puntos resultado exacto*/
-(5, 3, 0, 0), /*1 punto resultado correcto*/
-(6, 4, 2, 0), /*1 punto resultado correcto*/
-(7, 5, 0, 2); /*1 puntos resultado correcto*/
+(1, 1, 3, 0), /*Sin resultados*/
+(2, 1, 2, 0), /*Sin resultados*/
+(3, 2, 2, 1), /*1 puntos resultado correcto*/
+(4, 3, 1, 1), /*0 puntos resultado incorrecto*/
+(5, 3, 0, 1), /*3 puntos resultado exacto*/
+(6, 4, 2, 0), /*Sin resultados*/
+(7, 5, 1, 1); /*1 puntos resultado correcto*/
 
