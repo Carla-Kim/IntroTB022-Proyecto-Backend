@@ -12,33 +12,21 @@ CREATE TABLE IF NOT EXISTS partidos(
     equipo_local VARCHAR(50) NOT NULL,
     equipo_visitante VARCHAR(50) NOT NULL,
     fecha DATE NOT NULL,
-    fase VARCHAR(50) NOT NULL CHECK (fase IN ('grupos','dieciseisavos','octavos','cuartos','semis','final'))
+    fase VARCHAR(50) NOT NULL CHECK (fase IN ('grupos','dieciseisavos','octavos','cuartos','semis','final')),
+    resultados VARCHAR(50) 
 );
 
-CREATE TABLE IF NOT EXISTS resultados(
-    id_resultado INT AUTO_INCREMENT PRIMARY KEY,
-    id_partido INT NOT NULL UNIQUE,
-    local INT NOT NULL CHECK (local >= 0),
-    visitante INT NOT NULL CHECK (visitante >= 0),
-    FOREIGN KEY (id_partido) REFERENCES partidos(id_partido) ON DELETE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS predicciones(
-    id_prediccion INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_partido INT NOT NULL,
     local INT NOT NULL CHECK (local >= 0),
     visitante INT NOT NULL CHECK (visitante >= 0),
-    UNIQUE (id_usuario, id_partido),
+    PRIMARY KEY (id_usuario, id_partido),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_partido) REFERENCES partidos(id_partido) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS ranking (
-    id_usuario INT PRIMARY KEY,
-    puntos INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
-);
 
 INSERT INTO usuarios (nombre, email) VALUES
 ('Florencia Avila', 'flavila@fi.uba.ar'),
@@ -56,12 +44,6 @@ INSERT INTO partidos (equipo_local, equipo_visitante, fecha, fase) VALUES
 ('Argentina',  'Brasil',       '2026-07-04', 'cuartos'),
 ('Francia',    'Alemania',     '2026-07-05', 'cuartos');
 
-INSERT INTO resultados (id_partido, local, visitante) VALUES
-(1, 3, 0),
-(2, 1, 2),
-(3, 1, 1),
-(4, 2, 1),
-(5, 0, 1);
 
 INSERT INTO predicciones (id_usuario, id_partido, local, visitante) VALUES
 (1, 1, 3, 0), /*3 puntos resultado exacto */
@@ -72,12 +54,3 @@ INSERT INTO predicciones (id_usuario, id_partido, local, visitante) VALUES
 (6, 4, 2, 0), /*1 punto resultado correcto*/
 (7, 5, 0, 2); /*1 puntos resultado correcto*/
 
-
-INSERT INTO ranking (id_usuario, puntos) VALUES
-(1, 3),
-(2, 1),
-(3, 0), 
-(4, 3),
-(5, 0),
-(6, 1),
-(7, 1);
