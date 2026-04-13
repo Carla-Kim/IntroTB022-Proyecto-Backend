@@ -1,9 +1,10 @@
 import mysql.connector
+from app.config import DB_CONFIG
 
 conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="1234"
+    host=DB_CONFIG["host"],
+    user=DB_CONFIG["user"],
+    password=DB_CONFIG["password"]
 )
 
 cursor = conn.cursor()
