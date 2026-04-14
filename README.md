@@ -41,7 +41,7 @@ Este ejercicio simula un escenario real de desarrollo backend:
 > Módulo de predicciones. Igual estructura, para manejar la lógica de predicciones.
 >
 > **ranking/**  
-> Módulo de ranking. Contiene rutas, modelo y servicios.
+> Módulo de ranking. Contiene rutas y servicios.
 >
 > **utils/**  
 > Funciones auxiliares compartidas por varios módulos: paginación, validaciones y manejo de errores.
