@@ -1,6 +1,6 @@
 from flask import Flask
 from app.config import Config
-from app.users.routes import usuarios_bp
+from app.usuarios.routes import usuarios_bp
 from app.partidos.routes import partidos_bp
 from app.prediccion.routes import prediccion_bp
 from app.ranking.routes import ranking_bp
