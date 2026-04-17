@@ -4,7 +4,7 @@ from app.ranking.service import obtener_ranking_service
 ranking_bp = Blueprint('ranking', __name__)
 
 @ranking_bp.route('/ranking', methods=['GET'])
-def obtener_ranking()
+def obtener_ranking():
   try:
    limit = request.args.get('_limit', default=10, type=int)
    offset = request.args.get('_offset', default=0, type=int)
@@ -15,7 +15,7 @@ def obtener_ranking()
    
    base_url = "http://localhost:5000/ranking"
    response = {
-      "Ranking": ranking,
+      "ranking": ranking,
             "_links": {
                 "_first": {"href": f"{base_url}?_offset=0&_limit={limit}"},
                 "_prev": {"href": f"{base_url}?_offset={max(0, offset - limit)}&_limit={limit}"},
