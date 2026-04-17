@@ -1,5 +1,6 @@
 from flask import Flask
 from app.config import Config
+from app.utils.errors import register_error_handlers
 from app.usuarios.routes import usuarios_bp
 from app.partidos.routes import partidos_bp
 from app.prediccion.routes import prediccion_bp
@@ -9,6 +10,7 @@ Config.validate()
 
 app = Flask(__name__)
 
+register_error_handlers(app)
 app.register_blueprint(usuarios_bp)
 app.register_blueprint(partidos_bp)
 app.register_blueprint(prediccion_bp)
