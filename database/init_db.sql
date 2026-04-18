@@ -1,3 +1,5 @@
+-- Active: 1776466306213@@127.0.0.1@3306@proyecto_db
+USE proyecto_db;
 CREATE DATABASE IF NOT EXISTS fixture;
 USE fixture;
 
@@ -6,6 +8,7 @@ CREATE TABLE IF NOT EXISTS usuarios(
     nombre VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE
 );
+SELECT * FROM usuarios
 
 CREATE TABLE IF NOT EXISTS partidos(
     id_partido INT AUTO_INCREMENT PRIMARY KEY,
