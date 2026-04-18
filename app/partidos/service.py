@@ -12,14 +12,11 @@ def actualizando_resultado(data,id_partido):
     gol_actualizado = model.actualizar_resultado(gol_local,gol_visitante, id_partido)
     
     if gol_actualizado == 0:
-        return {
-            "proceso" : "fallido",
-            "mensaje" : f"No se encontro el ID del partido {id_partido} o el resultado ya fue actualizado"
-        }, 404
+        return None
     return {
         "proceso" : "existoso",
         "mensaje" : f"el partido {id_partido} actualizado {gol_local}-{gol_visitante}  "
-    }, 200
+    }
 
 def listar_partidos(base_url, args, equipo=None, fecha=None, fase=None, limit=10, offset=0):
     errors = validate_schema(
