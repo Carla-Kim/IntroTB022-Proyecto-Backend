@@ -1,5 +1,17 @@
 from app.db import get_connection
 
+def eliminar_usuario_db(id_usuario):
+   conn = get_connection()
+   cursor = conn.cursor()
+   cursor.execute("""
+          DELETE FROM usuarios WHERE id_usuario = %s"
+   """, (id_usuario,))
+   fila_eliminada = cursor.rowcount
+   conn.commit()
+   cursor.close()
+   conn.close()
+   return fila_eliminada > 0
+
 def buscar_usuario_por_email(email):
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True)
