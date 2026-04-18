@@ -1,5 +1,5 @@
 from app.schemas.primitives import EquipoSchema, FechaSchema, FaseSchema
-from app.schemas.pagination import PaginationSchema
+from app.schemas.commons import PaginationSchema
 
 PartidosQuerySchema = {
     "equipo": EquipoSchema,

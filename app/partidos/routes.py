@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.partidos.service import get_partido_by_id
-from app.utils.errors import BadRequestError
-from app.utils.validations import validate
-from app.partido import service
+from app.partidos import service
 
 partidos_bp = Blueprint('partidos', __name__)
 
@@ -32,12 +30,8 @@ def listar_partidos():
     limit = request.args.get("_limit", type=int, default=10)
     offset = request.args.get("_offset", type=int, default=0)
 
-    errors = validate_pagination(limit, offset)
-
-    if errors:
-        raise BadRequestError(errors=errors)
-
     base_url = request.base_url
+
     args = {
         k: v for k, v in {
             "equipo": equipo,
@@ -46,7 +40,7 @@ def listar_partidos():
         }.items() if v is not None
     }
 
-    result = PartidosService.listar_partidos(
+    result = service.listar_partidos(
         equipo=equipo,
         fecha=fecha,
         fase=fase,

@@ -1,4 +1,5 @@
-from app.db import get_connection
+from app.db import get_connection, get_cursor
+
 def actualizar_resultado(gol_local_act,gol_visit_act, id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -31,3 +32,22 @@ def formatear_partido(id_partido, local, visitante, fecha, fase, goles_local=Non
         "fase": fase,
         "resultado": resultado
     }
+
+def fetch_partidos(cursor, filters, params, limit, offset):
+        params_count = params.copy()
+        params_elems = params.copy()
+        params_elems.extend([limit, offset])
+
+        query_count = f"SELECT COUNT(*) AS count FROM partidos {filters}"
+        query_elems = f"SELECT id_partido, equipo_local, equipo_visitante, fecha, fase FROM partidos {filters} LIMIT %s OFFSET %s"
+
+        cursor.execute(query_count, params_count)
+        count = cursor.fetchone()["count"]
+
+        cursor.execute(query_elems, params_elems)
+        rows = cursor.fetchall()
+
+        return {
+            "rows": rows,
+            "count": count
+        }

@@ -21,6 +21,7 @@ def home():
 print("RUTA / REGISTRADA")
 
 register_error_handlers(app)
+app.json.sort_keys = False
 app.register_blueprint(usuarios_bp)
 app.register_blueprint(partidos_bp)
 app.register_blueprint(prediccion_bp)

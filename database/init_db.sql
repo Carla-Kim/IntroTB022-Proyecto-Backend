@@ -1,5 +1,5 @@
 -- Active: 1776466306213@@127.0.0.1@3306@proyecto_db
-USE proyecto_db;
+
 CREATE DATABASE IF NOT EXISTS fixture;
 USE fixture;
 

@@ -1,4 +1,4 @@
-from app.utils.db import get_connection
+from app.db import get_connection
 
 def eliminar_usuario_db(id_usuario):
    conn = get_connection()

@@ -1,4 +1,4 @@
-from app.utils.db import get_connection
+from app.db import get_connection
 
 def obtener_ranking_db(limit, offset):
   conn = get_connection()

@@ -3,7 +3,8 @@ EquipoSchema = {
 }
 
 FechaSchema = {
-    "type": "date"
+    "type": "string",
+    "format": "date"
 }
 
 FaseSchema = {
