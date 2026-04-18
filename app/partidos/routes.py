@@ -7,9 +7,15 @@ partidos_bp = Blueprint('partidos', __name__)
 #Endpoints
 @partidos_bp.route("/partidos/<int:id_partido>/resultado", methods=["PUT"])
 def actualizando(id_partido):
-    data = request.get_json()
-    actualizado, code = service.actualizando_resultado(data, id_partido)
-    return jsonify(actualizado), code
+    try:
+        data = request.get_json()
+        actualizado, code = service.actualizando_resultado(data, id_partido)
+        if actualizado is None:
+            return jsonify({"error": "No se encontró el ID del partido"}), 404
+        return jsonify(actualizado), 200
+    except Exception as e:
+        return jsonify({"error": "Datos inválidos"}), 400
+       
 
 #Rutas
 @partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
