@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS partidos(
     equipo_local VARCHAR(50) NOT NULL,
     equipo_visitante VARCHAR(50) NOT NULL,
     fecha DATE NOT NULL,
-    fase VARCHAR(50) NOT NULL CHECK (fase IN ('grupos','dieciseisavos','octavos','cuartos','semifinales','final')),
+    fase VARCHAR(50) NOT NULL CHECK (fase IN ('grupos','dieciseisavos','octavos','cuartos','semis','final')),
     goles_local INT CHECK (goles_local >= 0 OR goles_local IS NULL),
     goles_visitante INT CHECK (goles_visitante >= 0 OR goles_visitante IS NULL),
     CHECK (equipo_local <> equipo_visitante),

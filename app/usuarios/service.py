@@ -1,5 +1,7 @@
-from app.usuarios.model import insertar_usuario, buscar_usuario_por_email, obtener_usuario_por_id, actualizar_usuario_db
+from app.usuarios.model import insertar_usuario, buscar_usuario_por_email, obtener_usuario_por_id, actualizar_usuario_db, eliminar_usuario_db
 
+def eliminar_usuario_service(id_usuario):
+   return eliminar_usuario_db(id_usuario)
 
 def crear_usuario_service(nombre, email):
     # Validamos si el email ya existe para evitar errores de duplicados
