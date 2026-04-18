@@ -9,7 +9,7 @@ partidos_bp = Blueprint('partidos', __name__)
 def actualizando(id_partido):
     try:
         data = request.get_json()
-        actualizado, code = service.actualizando_resultado(data, id_partido)
+        actualizado = service.actualizando_resultado(data, id_partido)
         if actualizado is None:
             return jsonify({"error": "No se encontró el ID del partido"}), 404
         return jsonify(actualizado), 200
