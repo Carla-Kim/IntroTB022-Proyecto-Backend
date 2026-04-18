@@ -12,6 +12,7 @@ def actualizar_resultado(gol_local_act,gol_visit_act, id):
         raise e
     finally:
         cursor.close()
+        
 def formatear_partido(id_partido, local, visitante, fecha, fase, goles_local=None, goles_visitante=None):
     fecha_simple = str(fecha)
 
@@ -30,7 +31,6 @@ def formatear_partido(id_partido, local, visitante, fecha, fase, goles_local=Non
         "fase": fase,
         "resultado": resultado
     }
-from app.db import get_connection
 
 class PartidosModel:
 
