@@ -37,7 +37,7 @@ Este ejercicio simula un escenario real de desarrollo backend:
 > **partidos/**  
 > Módulo de partidos. Similar a users, con rutas, lógica de negocio y modelos.
 >
-> **prediccion/**  
+> **prediccion/**   
 > Módulo de predicciones. Igual estructura, para manejar la lógica de predicciones.
 >
 > **ranking/**  
