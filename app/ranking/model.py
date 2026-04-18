@@ -1,6 +1,6 @@
-from app.db import get_connection
+from app.utils.db import get_connection
 
-def obtener_ranking(id_usuario, puntos):
+def obtener_ranking_db(limit, offset):
   conn = get_connection()
   cursor = conn.cursor(dictionary=True)
   cursor.execute("""
@@ -23,11 +23,13 @@ def obtener_ranking(id_usuario, puntos):
         ) AS puntos
     FROM predicciones pred
     JOIN partidos part ON pred.id_partido = part.id_partido
+    WHERE part.goles_local IS NOT NULL
+    AND part.goles_visitante IS NOT NULL
     GROUP BY pred.id_usuario
     ORDER BY puntos DESC
     LIMIT %s OFFSET %s
-  """, )
+  """, (limit, offset))
   ranking = cursor.fetchall()
   cursor.close()
   conn.close()
-return ranking
+  return ranking
