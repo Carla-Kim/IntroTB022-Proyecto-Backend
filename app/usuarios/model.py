@@ -37,4 +37,14 @@ def obtener_usuario_por_id(id_usuario):
         cursor.close()
         conexion.close()
 
-
+def actualizar_usuario_db(id_usuario, nombre, email):
+    conexion = get_connection()
+    cursor = conexion.cursor()
+    try:
+        query = "UPDATE usuarios SET nombre = %s, email = %s WHERE id_usuario = %s"
+        cursor.execute(query, (nombre, email, id_usuario))
+        conexion.commit()  
+        return cursor.rowcount > 0 
+    finally:
+        cursor.close()
+        conexion.close()
