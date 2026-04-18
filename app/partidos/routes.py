@@ -4,14 +4,14 @@ from app.partidos import service
 
 partidos_bp = Blueprint('partidos', __name__)
 
-#Enpoints
-
+#Endpoints
 @partidos_bp.route("/partidos/<int:id_partido>/resultado", methods=["PUT"])
 def actualizando(id_partido):
     data = request.get_json()
     actualizado, code = service.actualizando_resultado(data, id_partido)
     return jsonify(actualizado), code
-#rutas
+
+#Rutas
 @partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
 def get_partido(partido_id):
     partido = get_partido_by_id(partido_id)

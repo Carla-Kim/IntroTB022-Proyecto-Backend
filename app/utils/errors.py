@@ -1,5 +1,10 @@
 from flask import jsonify
 
+def ReturnErrors(*errors):
+    return {
+        "errors": list(errors)
+    }
+
 class APIError(Exception):
     code = "INTERNAL_ERROR"
     status = 500
