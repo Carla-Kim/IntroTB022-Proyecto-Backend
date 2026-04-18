@@ -1,7 +1,7 @@
 # from .model import COMPLETAR ACA CON LAS FUNCIONES DEL MODEL
 from app.partido import model
 from app.db import get_connection
-from app.partidos.model import Partido, formatear_partido
+from app.partidos.model import formatear_partido
 from app.utils.pagination import build_links
 
 def actualizando_resultado(data,id_partido):
