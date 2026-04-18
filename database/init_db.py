@@ -15,21 +15,20 @@ try:
 
     cursor = conn.cursor()
 
-    with open("database/init_db.sql", "r") as f:
+    with open("database/init_db.sql", "r", encoding="utf-8") as f:
         sql = f.read()
 
-    cursor.execute(sql, multi=True)
+    for result in sql.split(';'):
+        if result.strip():
+            cursor.execute(result)
 
     conn.commit()
-
-    print("Base de datos inicializada correctamente.")
+    print("Base de datos 'fixture' e información inicial cargada.")
 
 except mysql.connector.Error as err:
-    print(f"Error al inicializar la base de datos: {err}")
-
+    print(f"Error de MySQL: {err}")
 except FileNotFoundError:
-    print("No se encontró el archivo init_db.sql.")
-
+    print("Archivo database/init_db.sql no encontrado.")
 finally:
     if cursor:
         cursor.close()
