@@ -17,6 +17,10 @@ def get_cursor():
     cursor = conn.cursor(dictionary=True)
     try:
         yield cursor
+        conn.commit()
+    except:
+        conn.rollback()
+        raise
     finally:
         cursor.close()
         conn.close()
