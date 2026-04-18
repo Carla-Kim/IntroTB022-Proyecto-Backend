@@ -1,9 +1,20 @@
 from flask import Blueprint, request, jsonify
-from app.partidos.service import PartidosService
+from app.partidos.service import PartidoService
 from app.utils.errors import BadRequestError
 from app.utils.validations import validate
 
 partidos_bp = Blueprint('partidos', __name__)
+
+#rutas
+@partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
+def get_partido(partido_id):
+    partido = PartidoService.get_partido_by_id(partido_id)
+
+    if not partido:
+        return jsonify({"error": "Partido no encontrado"}), 404
+    
+    return jsonify(partido), 200
+    #Por ahora dejamos los errores "armados a mano". Hay que armar los errores bien detallados para el usuario.
 
 @partidos_bp.get("/partidos")
 def listar_partidos():
