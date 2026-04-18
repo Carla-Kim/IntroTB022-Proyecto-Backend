@@ -2,9 +2,17 @@ from flask import Blueprint, request, jsonify
 from app.partidos.service import PartidoService
 from app.utils.errors import BadRequestError
 from app.utils.validations import validate
+from app.partido import service
 
 partidos_bp = Blueprint('partidos', __name__)
 
+#Enpoints
+
+@partidos_bp.route("/partidos/<int:id_partido>/resultado", methods=["PUT"])
+def actualizando(id_partido):
+    data = request.get_json()
+    actualizado, code = service.actualizando_resultado(data, id_partido)
+    return jsonify(actualizado), code
 #rutas
 @partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
 def get_partido(partido_id):
