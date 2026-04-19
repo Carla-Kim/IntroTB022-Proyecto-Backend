@@ -10,9 +10,14 @@ def guardar_prediccion(id_partido):
     try:
         data = request.get_json()
         resultado = service.guardar_prediccion(data, id_partido)
-        if resultado is None:
-            return jsonify({"error": "El partido ya se jugó o no existe. No podés predecir."}), 400
+        if resultado == "solicitud incompleta":
+            return jsonify({"error": "La solicitud está incompleta."}), 400
+        elif resultado == "no encontrado":
+            return jsonify({"error": "Partido no encontrado. No podés predecir."}), 404
+        elif resultado == "conflicto":
+            return jsonify({"error": "Ya existe una predicción para este usuario y partido."}), 409
         return jsonify(resultado), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+       
     

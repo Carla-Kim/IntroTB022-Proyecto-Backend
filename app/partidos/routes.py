@@ -41,6 +41,9 @@ def actualizando(id_partido):
         actualizado = service.actualizando_resultado(data, id_partido)
         if actualizado is None:
             return jsonify({"error": "No se encontró el ID del partido"}), 404
-        return jsonify(actualizado), 200
+        return "", 204
+    except (ValueError, TypeError, KeyError):
+        return jsonify({"error": "Datos inválidos o incompletos"}), 400
     except Exception as e:
-        return jsonify({"error": "Datos inválidos"}), 400
+        return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
+    

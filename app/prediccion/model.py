@@ -10,7 +10,7 @@ def verificacion(id_partido):
     
     finally:
         cursor.close()
-
+        conn.close()
 def guardando_prediccion(id_usuario, id_partido, goles_locales, goles_visitantes):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -24,3 +24,4 @@ def guardando_prediccion(id_usuario, id_partido, goles_locales, goles_visitantes
         raise e
     finally:
         cursor.close()
+        conn.close()
