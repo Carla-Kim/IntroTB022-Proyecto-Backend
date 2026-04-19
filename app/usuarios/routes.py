@@ -1,21 +1,21 @@
 from flask import Blueprint, request, jsonify
 from app.usuarios import service
-from app.utils.errors import ReturnErrors
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
 # Listar usuarios. --Flor
 @usuarios_bp.route('/usuarios', methods=['GET'])
 def listar_usuarios():
- try:
-    listado = service.listar_usuarios_service()
+    base_url = request.base_url
+    limit = request.args.get("_limit", type=int, default=10)
+    offset = request.args.get("_offset", type=int, default=0)
 
-    if not listado:
-        return '', 204
-    return jsonify({"usuarios": listado}), 200
- 
- except Exception as e:
-    return jsonify({"mensaje": "Error interno del servidor"}), 500
+    results, code = service.listar_usuarios(base_url, limit, offset)
+
+    if code == 204:
+        return "", code
+
+    return jsonify(results), code
 
 # Crear usuario. --Neithan
 @usuarios_bp.route('/usuarios', methods=['POST'])

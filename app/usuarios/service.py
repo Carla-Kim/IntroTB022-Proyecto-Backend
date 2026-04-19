@@ -5,8 +5,38 @@ from app.utils.pagination import build_links
 from app.utils.validations import validate_schema
 from app.schemas.groups.usuarios import *
 
-def listar_usuarios_service():
-    return model.obtener_usuarios()
+def listar_usuarios(base_url, limit, offset):
+    schema_errors = validate_schema(
+        PaginationSchema,
+        limit=limit,
+        offset=offset
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    try:
+        with get_cursor() as cursor:
+            data = model.fetch_usuarios(cursor, limit, offset)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+
+    usuarios = [{
+        "id": d["id_usuario"],
+        "nombre": d["nombre"],
+        "email": d["email"]
+    } for d in data["rows"] ]
+
+    count = data["count"]
+
+    return {
+        "usuarios": usuarios,
+        "_links": build_links(base_url, {}, limit, offset, count)
+    }, 200
 
 def crear_usuario(data):
     if not data:
