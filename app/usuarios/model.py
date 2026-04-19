@@ -4,9 +4,13 @@ def check_by_email(cursor, email):
     cursor.execute("SELECT 1 FROM usuarios WHERE email = %s", (email,))
     return cursor.fetchone() is not None
 
+def check_by_id(cursor, id):
+    cursor.execute("SELECT 1 FROM usuarios WHERE id_usuario = %s", (id,))
+    return cursor.fetchone() is not None
+
 def fetch_usuarios(cursor, limit, offset):
     sql_count = "SELECT COUNT(*) as count FROM usuarios"
-    sql_elems = "SELECT id_usuario, nombre, email FROM usuarios LIMIT %s OFFSET %s"
+    sql_elems = "SELECT id_usuario, nombre FROM usuarios LIMIT %s OFFSET %s"
 
     cursor.execute(sql_count)
     count = cursor.fetchone()["count"]
@@ -25,20 +29,11 @@ def insert_usuario(cursor, nombre, email):
 
     return cursor.lastrowid
 
-def obtener_usuario_por_id(id_usuario):
-    conexion = get_connection()
-    cursor = conexion.cursor(dictionary=True)
-    try:
-        query = "SELECT id_usuario as id, nombre, email FROM usuarios WHERE id_usuario = %s"
-        cursor.execute(query, (id_usuario,))
-        usuario = cursor.fetchone()
-        if usuario:
-            return usuario
-        else:
-            return None
-    finally:
-        cursor.close()
-        conexion.close()
+def fetch_usuario(cursor, id):
+    sql = "SELECT id_usuario, nombre, email FROM usuarios WHERE id_usuario = %s"
+    cursor.execute(sql, (id,))
+
+    return cursor.fetchone()
 
 def actualizar_usuario_db(id_usuario, nombre, email):
     conexion = get_connection()

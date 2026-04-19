@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.usuarios import service
 
-usuarios_bp = Blueprint('usuarios', __name__)
+usuarios_bp = Blueprint("usuarios", __name__)
 
 # Listar usuarios. --Flor
 @usuarios_bp.route('/usuarios', methods=['GET'])
@@ -26,17 +26,11 @@ def crear_usuario():
     return jsonify(added), code
 
 # Obtener un usuario por ID. --Flor
-@usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['GET'])
-def obtener_usuario_id(id_usuario):
-    try:
-       usuario = service.obtener_usuario_id_service(id_usuario)
-       
-       if usuario is None:
-          return jsonify({"mensaje": "Usuario no encontrado"}), 404
-       return jsonify(usuario), 200
-    
-    except Exception as e:
-       return jsonify({"mensaje": "Error interno del servidor"}), 500
+@usuarios_bp.route('/usuarios/<int:id>', methods=['GET'])
+def obtener_usuario(id):
+    result, code = service.obtener_usuario(id)
+
+    return jsonify(result), code
 
 # Reemplazar un usuario por ID. --Kevin
 @usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['PUT'])

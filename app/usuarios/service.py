@@ -27,8 +27,7 @@ def listar_usuarios(base_url, limit, offset):
 
     usuarios = [{
         "id": d["id_usuario"],
-        "nombre": d["nombre"],
-        "email": d["email"]
+        "nombre": d["nombre"]
     } for d in data["rows"] ]
 
     count = data["count"]
@@ -93,8 +92,47 @@ def crear_usuario(data):
         "email": email
     }, 201
 
-def obtener_usuario_id_service(id_usuario):
-    return model.obtener_usuario_id(id_usuario)
+def obtener_usuario(id):
+    if id is None:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    schema_errors = validate_schema(IdSchema, id=id)
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors({
+                "code": "Err",
+                "message": "Err",
+                "level": "Err",
+                "description": "Err"
+            }), 404
+
+            result = model.fetch_usuario(cursor, id)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    usuario = {
+        "id": result["id_usuario"],
+        "nombre": result["nombre"],
+        "email": result["email"]
+    }
+    
+    return usuario, 200
 
 def reemplazar_usuario_id(id_usuario, nuevo_nombre, nuevo_email):
     usuario_existente = model.obtener_usuario_por_id(id_usuario)

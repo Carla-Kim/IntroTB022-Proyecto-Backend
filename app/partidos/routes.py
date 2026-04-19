@@ -5,7 +5,7 @@ from app.utils.errors import ReturnErrors
 partidos_bp = Blueprint("partidos", __name__)
 
 # Listar y/o filtrar partidos. --Luis
-@partidos_bp.route("/partidos", methods=["GET"])
+@partidos_bp.route('/partidos', methods=['GET'])
 def listar_partidos():
     base_url = request.base_url
     args = request.args.to_dict()
@@ -20,7 +20,7 @@ def listar_partidos():
     return jsonify(results), code
 
 # Crear un partido. --Luis
-@partidos_bp.route("/partidos", methods=["POST"])
+@partidos_bp.route('/partidos', methods=['POST'])
 def crear_partido():
     data = request.get_json()
     added, code = service.crear_partido(data)
@@ -105,7 +105,7 @@ def eliminar_usuario(id):
     return jsonify(deleted), code
 
 # Actualizar resultados de un partido por ID. --John
-@partidos_bp.route("/partidos/<int:id>/resultado", methods=["PUT"])
+@partidos_bp.route('/partidos/<int:id>/resultado', methods=['PUT'])
 def actualizar_resultado(id):
     data = request.get_json()
     updated, code = service.actualizar_resultado(data, id)
