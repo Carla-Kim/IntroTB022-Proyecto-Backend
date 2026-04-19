@@ -98,6 +98,12 @@ def db_actualizar_parcial(id_partido, datos_a_cambiar):
         if conexion: conexion.close()
         if cursor: cursor.close()
 
+def delete_partido(cursor, id):
+    sql = "DELETE FROM partidos WHERE id_partido = %s"
+    cursor.execute(sql, (id,))
+
+    return cursor.rowcount
+
 def update_resultado(cursor, id, goles_local, goles_visitante):
     sql = "UPDATE partidos SET goles_local = %s, goles_visitante = %s WHERE id_partido = %s"
     cursor.execute(sql, (goles_local, goles_visitante, id))

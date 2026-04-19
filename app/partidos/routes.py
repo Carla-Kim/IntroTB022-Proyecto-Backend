@@ -71,7 +71,6 @@ def put_partido(id):
         "description": f"No existe el partido con ID {id}"
     })), 404
 
-
 # Actualizar parcialmente un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PATCH'])
 def patch_partido(id):
@@ -94,6 +93,16 @@ def patch_partido(id):
         "level": "error",
         "description": f"No existe el partido con ID {id}"
     })), 404
+
+# Eliminar un partido por ID. --Neithan
+@partidos_bp.route('/partidos/<int:id>', methods=['DELETE'])
+def eliminar_usuario(id):
+    deleted, code = service.eliminar_partido(id)
+    
+    if code == 204:
+        return "", 204
+
+    return jsonify(deleted), code
 
 # Actualizar resultados de un partido por ID. --John
 @partidos_bp.route("/partidos/<int:id>/resultado", methods=["PUT"])

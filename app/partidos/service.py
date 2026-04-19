@@ -155,6 +155,40 @@ def servicio_reemplazar(id_partido, data):
 def servicio_parchear(id_partido, data):
     return model.db_actualizar_parcial(id_partido, data)
 
+def eliminar_partido(id):
+    if id is None:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    schema_errors = validate_schema(IdSchema, id=id)
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    try:
+        with get_cursor() as cursor:
+            deleted = model.delete_partido(cursor, id)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    if deleted == 0:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 404
+    
+    return "", 204
+
 def actualizar_resultado(data, id):
     if not data:
         return ReturnErrors({
