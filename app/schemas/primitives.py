@@ -16,3 +16,12 @@ FaseSchema = {
     "type": "string",
     "enum": ["grupos", "dieciseisavos", "octavos", "cuartos", "semis", "final"]
 }
+
+NombreSchema = {
+    "type": "string"
+}
+
+EmailSchema = {
+    "type": "string",
+    "format": "email"
+}

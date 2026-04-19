@@ -1,5 +1,5 @@
-from app.db import get_connection, get_cursor
 from app.partidos import model
+from app.db import get_connection, get_cursor
 from app.utils.errors import ReturnErrors
 from app.utils.pagination import build_links
 from app.utils.validations import validate_schema

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.partidos import service
-from app.utils import ReturnErrors
+from app.utils.errors import ReturnErrors
 
 partidos_bp = Blueprint("partidos", __name__)
 
@@ -13,6 +13,9 @@ def listar_partidos():
     offset = request.args.get("_offset", type=int, default=0)
 
     results, code = service.listar_partidos(base_url, args, limit, offset)
+
+    if code == 204:
+        return "", code
 
     return jsonify(results), code
 

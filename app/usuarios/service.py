@@ -1,23 +1,77 @@
-from app.usuarios.model import insertar_usuario, buscar_usuario_por_email, obtener_usuario_por_id, actualizar_usuario_db, eliminar_usuario_db, obtener_usuarios
+from app.usuarios import model
+from app.db import get_cursor
+from app.utils.errors import ReturnErrors
+from app.utils.pagination import build_links
+from app.utils.validations import validate_schema
+from app.schemas.groups.usuarios import *
 
-def eliminar_usuario_service(id_usuario):
-   return eliminar_usuario_db(id_usuario)
+def listar_usuarios_service():
+    return model.obtener_usuarios()
 
-def crear_usuario_service(nombre, email):
-    # Validamos si el email ya existe para evitar errores de duplicados
-    usuario_existente = buscar_usuario_por_email(email)
-    if usuario_existente:
-        return {"error": "Este email ya está registrado"}
+def crear_usuario(data):
+    if not data:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+
+    nombre = data.get("nombre")
+    email = data.get("email")
     
-    # Si no existe, lo creamos
-    return insertar_usuario(nombre, email)
+    if not nombre or not email:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+
+    schema_errors = validate_schema(
+        UsuarioBodySchema,
+        nombre=nombre,
+        email=email
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    try:
+        with get_cursor() as cursor:
+            exists_email = model.check_email(cursor, email)
+
+            if exists_email:
+                return ReturnErrors({
+                    "code": "Err",
+                    "message": "Err",
+                    "level": "Err",
+                    "description": "Err"
+                }), 409
+
+            new_id = model.insert_usuario(cursor, nombre, email)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+
+    return {
+        "id": new_id,
+        "nombre": nombre,
+        "email": email
+    }, 201
+
+def obtener_usuario_id_service(id_usuario):
+    return model.obtener_usuario_id(id_usuario)
 
 def reemplazar_usuario_id(id_usuario, nuevo_nombre, nuevo_email):
-    usuario_existente = obtener_usuario_por_id(id_usuario)
+    usuario_existente = model.obtener_usuario_por_id(id_usuario)
     if not usuario_existente:  
         return {"error": "Usuario no encontrado"}
     
-    actualizar_usuario_db(id_usuario, nuevo_nombre, nuevo_email)
+    model.actualizar_usuario_db(id_usuario, nuevo_nombre, nuevo_email)
 
     return {
         "id_usuario": id_usuario, 
@@ -25,8 +79,5 @@ def reemplazar_usuario_id(id_usuario, nuevo_nombre, nuevo_email):
         "email": nuevo_email
     }
 
-def listar_usuarios_service():
-    return obtener_usuarios()
-
-def obtener_usuario_id_service(id_usuario):
-    return obtener_usuario_id(id_usuario)
+def eliminar_usuario_service(id_usuario):
+   return model.eliminar_usuario_db(id_usuario)

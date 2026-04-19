@@ -38,31 +38,30 @@ def registrar_prediccion(data, id_partido):
         with get_cursor() as cursor:
             validation = model.validar_prediccion(cursor, id_partido, id_usuario)
 
-        if validation is None:
-            return ReturnErrors({
-                "code": "Err",
-                "message": "Err",
-                "level": "Err",
-                "description": "Err"
-            }), 404
+            if validation is None:
+                return ReturnErrors({
+                    "code": "Err",
+                    "message": "Err",
+                    "level": "Err",
+                    "description": "Err"
+                }), 404
 
-        if validation["goles_local"] is not None:
-            return ReturnErrors({
-                "code": "Err",
-                "message": "Err",
-                "level": "Err",
-                "description": "Err"
-            }), 400
+            if validation["goles_local"] is not None:
+                return ReturnErrors({
+                    "code": "Err",
+                    "message": "Err",
+                    "level": "Err",
+                    "description": "Err"
+                }), 400
 
-        if validation["id_usuario"] is not None:
-            return ReturnErrors({
-                "code": "Err",
-                "message": "Err",
-                "level": "Err",
-                "description": "Err"
-            }), 409
+            if validation["id_usuario"] is not None:
+                return ReturnErrors({
+                    "code": "Err",
+                    "message": "Err",
+                    "level": "Err",
+                    "description": "Err"
+                }), 409
 
-        with get_cursor() as cursor:
             model.insert_prediccion(cursor, id_usuario, id_partido, goles_local, goles_visitante)
     except Exception as e:
         return ReturnErrors({

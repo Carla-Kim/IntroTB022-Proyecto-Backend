@@ -1,5 +1,11 @@
 from app.db import get_connection
 
+def check_email(cursor, email):
+    cursor.execute("SELECT 1 FROM usuarios WHERE email = %s", (email,))
+    return cursor.fetchone() is not None
+
+###
+
 def obtener_usuarios():
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True)
@@ -10,40 +16,12 @@ def obtener_usuarios():
     conexion.close()
     return usuarios
 
-def eliminar_usuario_db(id_usuario):
-   conn = get_connection()
-   cursor = conn.cursor()
-   cursor.execute("""
-          DELETE FROM usuarios WHERE id_usuario = %s
-   """, (id_usuario,))
-   fila_eliminada = cursor.rowcount
-   conn.commit()
-   cursor.close()
-   conn.close()
-   return fila_eliminada > 0
+def insert_usuario(cursor, nombre, email):
+    sql = "INSERT INTO usuarios (nombre, email) VALUES (%s, %s)"
+    cursor.execute(sql, (nombre, email))
 
-def buscar_usuario_por_email(email):
-    conexion = get_connection()
-    cursor = conexion.cursor(dictionary=True)
-    query = "SELECT * FROM usuarios WHERE email = %s"
-    cursor.execute(query, (email,))
-    usuario = cursor.fetchone()
-    cursor.close()
-    conexion.close()
-    return usuario
+    return cursor.lastrowid
 
-def insertar_usuario(nombre, email):
-    conexion = get_connection()
-    cursor = conexion.cursor(dictionary=True)
-    query = "INSERT INTO usuarios (nombre, email) VALUES (%s, %s)"
-    cursor.execute(query, (nombre, email))
-    nuevo_id = cursor.lastrowid
-    conexion.commit()
-    cursor.close()
-    conexion.close()
-    return {"id_usuario": nuevo_id, "nombre": nombre, "email": email}
-
-#N°8 Kevin
 def obtener_usuario_por_id(id_usuario):
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True)
@@ -70,3 +48,15 @@ def actualizar_usuario_db(id_usuario, nombre, email):
     finally:
         cursor.close()
         conexion.close()
+
+def eliminar_usuario_db(id_usuario):
+   conn = get_connection()
+   cursor = conn.cursor()
+   cursor.execute("""
+          DELETE FROM usuarios WHERE id_usuario = %s
+   """, (id_usuario,))
+   fila_eliminada = cursor.rowcount
+   conn.commit()
+   cursor.close()
+   conn.close()
+   return fila_eliminada > 0
