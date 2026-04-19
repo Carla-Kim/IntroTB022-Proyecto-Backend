@@ -8,41 +8,12 @@ partidos_bp = Blueprint("partidos", __name__)
 def listar_partidos():
     base_url = request.base_url
     args = request.args.to_dict()
-
-    results, code = service.listar_partidos(base_url, args)
-
-    return jsonify(results), code
-
-@partidos_bp.route("/partidos", methods=["GET"])
-def listar_partidos():
-    args = request.args
-    base_url = request.base_url
-
-    equipo = request.args.get("equipo")
-    fecha = request.args.get("fecha")
-    fase = request.args.get("fase")
     limit = request.args.get("_limit", type=int, default=10)
     offset = request.args.get("_offset", type=int, default=0)
 
-    args = {
-        k: v for k, v in {
-            "equipo": equipo,
-            "fecha": fecha,
-            "fase": fase
-        }.items() if v is not None
-    }
+    results, code = service.listar_partidos(base_url, args, limit, offset)
 
-    result = service.listar_partidos(
-        equipo=equipo,
-        fecha=fecha,
-        fase=fase,
-        limit=limit,
-        offset=offset,
-        base_url=base_url,
-        args=args
-    )
-
-    return jsonify(result), 200
+    return jsonify(results), code
 
 # Crear un partido.
 @partidos_bp.route("/partidos", methods=["POST"])

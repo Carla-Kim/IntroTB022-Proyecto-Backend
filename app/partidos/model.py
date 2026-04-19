@@ -1,10 +1,6 @@
 from app.db import get_connection, get_cursor
 
-def fetch_partidos(cursor, filters, params, limit, offset):
-    params_count = params.copy()
-    params_elems = params.copy()
-    params_elems.extend([limit, offset])
-
+def fetch_partidos(cursor, filters, params_count, params_elems):
     sql_count = f"SELECT COUNT(*) AS count FROM partidos {filters}"
     sql_elems = f"SELECT id_partido, equipo_local, equipo_visitante, fecha, fase FROM partidos {filters} LIMIT %s OFFSET %s"
 

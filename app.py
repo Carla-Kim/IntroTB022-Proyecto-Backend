@@ -1,6 +1,5 @@
 from flask import Flask
 from app.config import Config
-from app.utils.errors import register_error_handlers
 from app.usuarios.routes import usuarios_bp
 from app.partidos.routes import partidos_bp
 from app.prediccion.routes import prediccion_bp
@@ -20,7 +19,6 @@ def home():
 
 print("RUTA / REGISTRADA")
 
-register_error_handlers(app)
 app.json.sort_keys = False
 app.register_blueprint(usuarios_bp)
 app.register_blueprint(partidos_bp)

@@ -6,16 +6,21 @@ from app.utils.pagination import build_links
 from app.utils.validations import validate_schema
 from app.schemas.groups.partidos import *
 
-def listar_partidos(base_url, args):
-    schema_errors = validate_schema(PartidosQuerySchema, **args)
-    if schema_errors:
-        return ReturnErrors(*schema_errors), 400
-
+def listar_partidos(base_url, args, limit, offset):
     equipo = args.get("equipo")
     fecha = args.get("fecha")
     fase = args.get("fase")
-    limit = int(args.get("_limit", 10))
-    offset = int(args.get("_offset", 0))
+
+    schema_errors = validate_schema(
+        PartidosQuerySchema,
+        equipo=equipo,
+        fecha=fecha,
+        fase=fase,
+        limit=limit,
+        offset=offset
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
 
     filters = "WHERE 1=1"
     params = []
@@ -30,9 +35,12 @@ def listar_partidos(base_url, args):
         filters += " AND fase = %s"
         params.append(fase)
 
+    params_elems = [*params, limit, offset]
+    params_count = params
+
     try:
         with get_cursor() as cursor:
-            data = model.fetch_partidos(cursor, filters, params, limit, offset)
+            data = model.fetch_partidos(cursor, filters, params_count, params_elems)
     except Exception as e:
         return ReturnErrors({
             "code": "Err",
