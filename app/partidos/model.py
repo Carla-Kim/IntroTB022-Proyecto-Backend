@@ -57,3 +57,4 @@ def actualizar_resultado(gol_local_act,gol_visit_act, id):
         raise e
     finally:
         cursor.close()
+        conn.close()
