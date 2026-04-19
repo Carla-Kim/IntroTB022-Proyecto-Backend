@@ -1,5 +1,9 @@
 from app.db import get_connection
 
+def check_by_id(cursor, id):
+    cursor.execute("SELECT 1 FROM partidos WHERE id_partido = %s", (id,))
+    return cursor.fetchone() is not None
+
 def fetch_partidos(cursor, filters, params_count, params_elems):
     sql_count = f"SELECT COUNT(*) AS count FROM partidos {filters}"
     sql_elems = f"SELECT id_partido, equipo_local, equipo_visitante, fecha, fase FROM partidos {filters} LIMIT %s OFFSET %s"
@@ -21,24 +25,11 @@ def insert_partido(cursor, equipo_local, equipo_visitante, fecha, fase):
 
     return cursor.lastrowid
 
-def formatear_partido(id_partido, local, visitante, fecha, fase, goles_local=None, goles_visitante=None):
-    fecha_simple = str(fecha)
+def fetch_partido(cursor, id):
+    sql = "SELECT * FROM partidos WHERE id_partido = %s"
+    cursor.execute(sql, (id,))
 
-    resultado = None
-    if goles_local is not None:
-        resultado = {
-            "goles_local": goles_local,
-            "goles_visitante": goles_visitante
-        }
-
-    return {
-        "id": id_partido,
-        "equipo_local": local,
-        "equipo_visitante": visitante,
-        "fecha": fecha_simple,
-        "fase": fase,
-        "resultado": resultado
-    }
+    return cursor.fetchone()
 
 def db_reemplazar_partido(id_partido, local, visitante, fecha, fase):
     conexion = None

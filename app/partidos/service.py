@@ -122,29 +122,50 @@ def crear_partido(data):
         "fase": fase
     }, 201
 
-def get_partido_by_id(partido_id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+def obtener_partido(id):
+    if id is None:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    schema_errors = validate_schema(IdSchema, id=id)
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
 
-    query = "SELECT * FROM partidos WHERE id_partido = %s"
-    cursor.execute(query, (partido_id,))
-    row = cursor.fetchone()
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
 
-    cursor.close()
-    conn.close()
+            if not exists_id:
+                return ReturnErrors({
+                "code": "Err",
+                "message": "Err",
+                "level": "Err",
+                "description": "Err"
+            }), 404
 
-    if not row:
-        return None 
+            result = model.fetch_partido(cursor, id)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    partido = {
+        "id": result["id_partido"],
+        "equipo_local": result["equipo_local"],
+        "equipo_visitante": result["equipo_visitante"],
+        "fecha": str(result["fecha"]),
+        "fase": result["fase"],
+        "resultado": {"local": result["goles_local"], "visitante": result["goles_visitante"]}
+    }
 
-    return model.formatear_partido(
-        id_partido=row['id_partido'],
-        local=row['equipo_local'],
-        visitante=row['equipo_visitante'],
-        fecha=row['fecha'],
-        fase=row['fase'],
-        goles_local=row['goles_local'],
-        goles_visitante=row['goles_visitante']
-    )
+    return partido, 200
 
 def servicio_reemplazar(id_partido, data):
     return model.db_reemplazar_partido(

@@ -28,14 +28,11 @@ def crear_partido():
     return jsonify(added), code
 
 # Obtener un partido por ID. --Kevin
-@partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
-def get_partido(partido_id):
-    partido = service.get_partido_by_id(partido_id)
-
-    if not partido:
-        return jsonify({"error": "Partido no encontrado"}), 404
+@partidos_bp.route('/partidos/<int:id>', methods=['GET'])
+def obtener_partido(id):
+    result, code = service.obtener_partido(id)
    
-    return jsonify(partido), 200
+    return jsonify(result), code
 
 # Reemplazar un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PUT'])
