@@ -134,18 +134,57 @@ def obtener_usuario(id):
     
     return usuario, 200
 
-def reemplazar_usuario_id(id_usuario, nuevo_nombre, nuevo_email):
-    usuario_existente = model.obtener_usuario_por_id(id_usuario)
-    if not usuario_existente:  
-        return {"error": "Usuario no encontrado"}
+def reemplazar_usuario(data, id):
+    if not data:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
     
-    model.actualizar_usuario_db(id_usuario, nuevo_nombre, nuevo_email)
+    nombre = data.get("nombre")
+    email = data.get("email")
 
-    return {
-        "id_usuario": id_usuario, 
-        "nombre": nuevo_nombre, 
-        "email": nuevo_email
-    }
+    if not all([nombre, email]):
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    schema_errors = validate_schema(
+        UsuarioBodySchema,
+        id=id,
+        nombre=nombre,
+        email=email
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors({
+                "code": "Err",
+                "message": "Err",
+                "level": "Err",
+                "description": "Err"
+            }), 404
+
+            model.update_usuario(cursor, id, nombre, email)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+
+    return "", 204
 
 def eliminar_usuario(id):
     if id is None:

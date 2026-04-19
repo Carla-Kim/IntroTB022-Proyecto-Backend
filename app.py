@@ -1,5 +1,5 @@
 from flask import Flask
-from app.config import Config
+from app.config import *
 from app.usuarios.routes import usuarios_bp
 from app.partidos.routes import partidos_bp
 from app.predicciones.routes import predicciones_bp
@@ -7,8 +7,7 @@ from app.ranking.routes import ranking_bp
 
 print("INICIANDO APP")
 
-Config.validate()
-
+validate_config()
 app = Flask(__name__)
 
 print("APP CREADA")
@@ -30,4 +29,4 @@ print("BLUEPRINTS REGISTRADOS")
 print(app.url_map)
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(**APP_CONFIG)

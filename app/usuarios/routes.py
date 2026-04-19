@@ -33,19 +33,15 @@ def obtener_usuario(id):
     return jsonify(result), code
 
 # Reemplazar un usuario por ID. --Kevin
-@usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['PUT'])
-def reemplazar_usuario(id_usuario):
+@usuarios_bp.route('/usuarios/<int:id>', methods=['PUT'])
+def reemplazar_usuario(id):
     data = request.get_json()
+    updated, code = service.reemplazar_usuario(data, id)
     
-    if not data or 'nombre' not in data or 'email' not in data:
-        return jsonify({"error": "Faltan datos obligatorios"}), 400
-    
-    resultado = service.reemplazar_usuario_id(id_usuario, data['nombre'], data['email'])
-    
-    if "error" in resultado:
-        return jsonify(resultado), 404
-    
-    return jsonify(resultado), 200
+    if code == 204:
+        return "", code
+
+    return jsonify(updated), code
 
 # Eliminar un usuario por ID. --Nicolás
 @usuarios_bp.route('/usuarios/<int:id>', methods=['DELETE'])
