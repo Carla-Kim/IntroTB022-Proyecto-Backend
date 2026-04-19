@@ -53,34 +53,12 @@ def reemplazar_usuario(id_usuario):
     
     return jsonify(resultado), 200
 
-# Eliminar un usuario. --Nicolás
-@usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['DELETE'])
-def eliminar_usuario(id_usuario):
-    try:
-       if id_usuario <= 0:
-            return jsonify(ReturnErrors({
-                "code": "400",
-                "message": "Bad Request",
-                "level": "error",
-                "description": "El id_usuario no puede ser menor a 0"
-            })), 400
-        
-       fue_eliminado = service.eliminar_usuario_service(id_usuario)
-     
-       if fue_eliminado:
-          return '', 204
+# Eliminar un usuario por ID. --Nicolás
+@usuarios_bp.route('/usuarios/<int:id>', methods=['DELETE'])
+def eliminar_usuario(id):
+    deleted, code = service.eliminar_usuario(id)
+    
+    if code == 204:
+        return "", 204
 
-       return jsonify(ReturnErrors({
-          "code": "404",
-          "message": "Not Found",
-          "level": "error",
-          "description": "No existe ese usuario"
-         })), 404
- 
-    except Exception as e:
-         return jsonify(ReturnErrors({
-            "code": "500",
-            "message": "Database Error",
-            "level": "error",
-            "description": str(e)
-        })), 500
+    return jsonify(deleted), code

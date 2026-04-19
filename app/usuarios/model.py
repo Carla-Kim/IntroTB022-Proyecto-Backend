@@ -1,10 +1,8 @@
 from app.db import get_connection
 
-def check_email(cursor, email):
+def check_by_email(cursor, email):
     cursor.execute("SELECT 1 FROM usuarios WHERE email = %s", (email,))
     return cursor.fetchone() is not None
-
-###
 
 def obtener_usuarios():
     conexion = get_connection()
@@ -49,14 +47,8 @@ def actualizar_usuario_db(id_usuario, nombre, email):
         cursor.close()
         conexion.close()
 
-def eliminar_usuario_db(id_usuario):
-   conn = get_connection()
-   cursor = conn.cursor()
-   cursor.execute("""
-          DELETE FROM usuarios WHERE id_usuario = %s
-   """, (id_usuario,))
-   fila_eliminada = cursor.rowcount
-   conn.commit()
-   cursor.close()
-   conn.close()
-   return fila_eliminada > 0
+def delete_usuario(cursor, id):
+    sql = "DELETE FROM usuarios WHERE id_usuario = %s"
+    cursor.execute(sql, (id,))
+
+    return cursor.rowcount

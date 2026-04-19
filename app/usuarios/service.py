@@ -38,7 +38,7 @@ def crear_usuario(data):
 
     try:
         with get_cursor() as cursor:
-            exists_email = model.check_email(cursor, email)
+            exists_email = model.check_by_email(cursor, email)
 
             if exists_email:
                 return ReturnErrors({
@@ -79,5 +79,36 @@ def reemplazar_usuario_id(id_usuario, nuevo_nombre, nuevo_email):
         "email": nuevo_email
     }
 
-def eliminar_usuario_service(id_usuario):
-   return model.eliminar_usuario_db(id_usuario)
+def eliminar_usuario(id):
+    if id is None:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    schema_errors = validate_schema(IdSchema, id=id)
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    try:
+        with get_cursor() as cursor:
+            deleted = model.delete_usuario(cursor, id)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    if deleted == 0:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 404
+    
+    return "", 204
