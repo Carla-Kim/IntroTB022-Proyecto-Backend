@@ -1,7 +1,6 @@
-# from .model import COMPLETAR ACA CON LAS FUNCIONES DEL MODEL
 from app.db import get_connection, get_cursor
 from app.partidos import model
-from app.utils.errors import BadRequestError, ReturnErrors
+from app.utils.errors import ReturnErrors
 from app.utils.pagination import build_links
 from app.utils.validations import validate_schema
 from app.schemas.groups.partidos import *
@@ -147,14 +146,51 @@ def get_partido_by_id(partido_id):
         goles_visitante=row['goles_visitante']
     )
 
-def actualizando_resultado(data,id_partido):
-    gol_local = data.get("gol local")
-    gol_visitante = data.get("gol visitante")
-    gol_actualizado = model.actualizar_resultado(gol_local,gol_visitante, id_partido)
+def actualizar_resultado(data, id):
+    if not data:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
     
-    if gol_actualizado == 0:
-        return None
-    return {
-        "proceso" : "existoso",
-        "mensaje" : f"el partido {id_partido} actualizado {gol_local}-{gol_visitante}  "
-    }
+    goles_local = data.get("goles_local")
+    goles_visitante = data.get("goles_visitante")
+
+    if goles_local is None or goles_visitante is None:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    schema_errors = validate_schema(
+        ResultadoSchema,
+        goles_local=goles_local,
+        goles_visitante=goles_visitante
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+    
+    try:
+        with get_cursor() as cursor:
+            updated = model.update_resultado(cursor, id, goles_local, goles_visitante)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    if updated == 0:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 404
+    
+    return "", 204

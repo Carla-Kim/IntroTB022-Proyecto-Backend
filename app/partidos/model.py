@@ -1,5 +1,3 @@
-from app.db import get_connection, get_cursor
-
 def fetch_partidos(cursor, filters, params_count, params_elems):
     sql_count = f"SELECT COUNT(*) AS count FROM partidos {filters}"
     sql_elems = f"SELECT id_partido, equipo_local, equipo_visitante, fecha, fase FROM partidos {filters} LIMIT %s OFFSET %s"
@@ -40,17 +38,8 @@ def formatear_partido(id_partido, local, visitante, fecha, fase, goles_local=Non
         "resultado": resultado
     }
 
-def actualizar_resultado(gol_local_act,gol_visit_act, id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    try:
-        sql = "UPDATE partidos SET goles_local = %s, goles_visitante = %s WHERE id_partido = %s"
-        cursor.execute(sql, (gol_local_act, gol_visit_act, id))
-        conn.commit()
-        return cursor.rowcount  
-    except Exception as e:
-        conn.rollback() 
-        raise e
-    finally:
-        cursor.close()
-        conn.close()
+def update_resultado(cursor, id, goles_local, goles_visitante):
+    sql = "UPDATE partidos SET goles_local = %s, goles_visitante = %s WHERE id_partido = %s"
+    cursor.execute(sql, (goles_local, goles_visitante, id))
+
+    return cursor.rowcount
