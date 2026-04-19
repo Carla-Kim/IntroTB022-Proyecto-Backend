@@ -1,5 +1,10 @@
-from app.schemas.primitives import EquipoSchema, FechaSchema, FaseSchema
+from app.schemas.primitives import IdSchema, EquipoSchema, FechaSchema, FaseSchema
 from app.schemas.commons import PaginationSchema
+
+ResultadoSchema = {
+    "goles_local": {"type": "integer", "min": 0},
+    "goles_visitante": {"type": "integer", "min": 0}
+}
 
 PartidosQuerySchema = {
     "equipo": EquipoSchema,
@@ -25,7 +30,8 @@ PartidoUpdateSchema = {
     "fase": FaseSchema,
 }
 
-ResultadoSchema = {
-    "local": {"type": "integer", "min": 0},
-    "visitante": {"type": "integer", "min": 0}
+PrediccionBodySchema = {
+    "id_usuario": IdSchema,
+    "id_partido": IdSchema,
+    **ResultadoSchema
 }

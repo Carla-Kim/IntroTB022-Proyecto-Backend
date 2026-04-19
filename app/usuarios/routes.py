@@ -1,19 +1,39 @@
 from flask import Blueprint, request, jsonify
 from app.usuarios.service import eliminar_usuario_service, obtener_usuario_id_service, listar_usuarios_service, crear_usuario_service, reemplazar_usuario_id
+from app.utils.errors import ReturnErrors
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
 @usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['DELETE'])
 def eliminar_usuario(id_usuario):
- try:
-    fue_eliminado = eliminar_usuario_service(id_usuario)
-    if fue_eliminado:
-       return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
+    try:
+       if id_usuario <= 0:
+            return jsonify(ReturnErrors({
+                "code": "400",
+                "message": "Bad Request",
+                "level": "error",
+                "description": "El id_usuario no puede ser menor a 0"
+            })), 400
+        
+       fue_eliminado = eliminar_usuario_service(id_usuario)
+     
+       if fue_eliminado:
+          return '', 204
 
-    return jsonify({"mensaje": "No existe ese usuario"}), 404
+       return jsonify(ReturnErrors({
+          "code": "404",
+          "message": "Not Found",
+          "level": "error",
+          "description": "No existe ese usuario"
+         })), 404
  
- except Exception as e:
-       return jsonify({"mensaje": "Error interno del servidor"}), 500
+    except Exception as e:
+         return jsonify(ReturnErrors({
+            "code": "500",
+            "message": "Database Error",
+            "level": "error",
+            "description": str(e)
+        })), 500
 
 @usuarios_bp.route('/usuarios', methods=['POST'])
 def crear_usuario():

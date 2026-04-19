@@ -4,7 +4,7 @@ from app.utils import ReturnErrors
 
 partidos_bp = Blueprint("partidos", __name__)
 
-# Listar y/o filtrar partidos.
+# Listar y/o filtrar partidos. --Luis
 @partidos_bp.route("/partidos", methods=["GET"])
 def listar_partidos():
     base_url = request.base_url
@@ -16,7 +16,7 @@ def listar_partidos():
 
     return jsonify(results), code
 
-# Crear un partido.
+# Crear un partido. --Luis
 @partidos_bp.route("/partidos", methods=["POST"])
 def crear_partido():
     data = request.get_json()
@@ -24,7 +24,7 @@ def crear_partido():
 
     return jsonify(added), code
 
-# Obtener un partido por ID.
+# Obtener un partido por ID. --Kevin
 @partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
 def get_partido(partido_id):
     partido = service.get_partido_by_id(partido_id)
@@ -92,17 +92,13 @@ def patch_partido(id):
         "description": f"No existe el partido con ID {id}"
     })), 404
 
-# Actualizar resultados de un partido por ID.
-@partidos_bp.route("/partidos/<int:id_partido>/resultado", methods=["PUT"])
-def actualizando(id_partido):
-    try:
-        data = request.get_json()
-        actualizado = service.actualizando_resultado(data, id_partido)
-        if actualizado is None:
-            return jsonify({"error": "No se encontró el ID del partido"}), 404
-        return "", 204
-    except (ValueError, TypeError, KeyError):
-        return jsonify({"error": "Datos inválidos o incompletos"}), 400
-    except Exception as e:
-        return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
-    
+# Actualizar resultados de un partido por ID. --John
+@partidos_bp.route("/partidos/<int:id>/resultado", methods=["PUT"])
+def actualizar_resultado(id):
+    data = request.get_json()
+    updated, code = service.actualizar_resultado(data, id)
+
+    if code == 204:
+        return "", code
+
+    return jsonify(updated), code

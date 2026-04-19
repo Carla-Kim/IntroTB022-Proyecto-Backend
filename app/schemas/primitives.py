@@ -1,3 +1,8 @@
+IdSchema = {
+    "type": "integer",
+    "min": 1
+}
+
 EquipoSchema = {
     "type": "string"
 }

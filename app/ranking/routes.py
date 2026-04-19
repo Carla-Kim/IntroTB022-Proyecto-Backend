@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.ranking.service import obtener_ranking_service
+from app.utils.errors import ReturnErrors
 
 ranking_bp = Blueprint('ranking', __name__)
 
@@ -8,6 +9,15 @@ def obtener_ranking():
     try:
         limit = request.args.get('_limit', default=10, type=int)
         offset = request.args.get('_offset', default=0, type=int)
+        if limit is None or offset is None or limit <= 0 or offset < 0:
+            return jsonify(ReturnErrors({
+                "code": "400",
+                "message": "Bad Request",
+                "level": "error",
+                "description": "Los parámetros _limit y _offset no son validos"
+            })), 400
+
+        
         ranking = obtener_ranking_service(limit, offset)
 
         if not ranking:
@@ -26,4 +36,9 @@ def obtener_ranking():
         return jsonify(response), 200
   
     except Exception as e:
-        return jsonify({"mensaje": "Error interno del servidor"}), 500
+         return jsonify(ReturnErrors({
+            "code": "500",
+            "message": "Internal Server Error",
+            "level": "error",
+            "description": str(e)
+        })), 500
