@@ -167,14 +167,143 @@ def obtener_partido(id):
 
     return partido, 200
 
-def servicio_reemplazar(id_partido, data):
-    return model.db_reemplazar_partido(
-        id_partido, data['equipo_local'], data['equipo_visitante'], 
-        data['fecha'], data['fase']
-    )
+def reemplazar_partido(data, id):
+    if not data:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    equipo_local = data.get("equipo_local")
+    equipo_visitante = data.get("equipo_visitante")
+    fecha = data.get("fecha")
+    fase = data.get("fase")
 
-def servicio_parchear(id_partido, data):
-    return model.db_actualizar_parcial(id_partido, data)
+    if not all([equipo_local, equipo_visitante, fecha, fase]):
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+
+    schema_errors = validate_schema(
+        PartidoBodySchema,
+        id=id,
+        equipo_local=equipo_local,
+        equipo_visitante=equipo_visitante,
+        fecha=fecha,
+        fase=fase
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    columns = [
+        "equipo_local = %s",
+        "equipo_visitante = %s",
+        "fecha = %s",
+        "fase = %s"
+    ]
+    params = [equipo_local, equipo_visitante, fecha, fase, id]
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors({
+                "code": "Err",
+                "message": "Err",
+                "level": "Err",
+                "description": "Err"
+            }), 404
+
+            model.update_partido(cursor, columns, params)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    return "", 204
+
+def actualizar_partido(data, id):
+    if not data:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+    
+    equipo_local = data.get("equipo_local")
+    equipo_visitante = data.get("equipo_visitante")
+    fecha = data.get("fecha")
+    fase = data.get("fase")
+
+    if not any([equipo_local, equipo_visitante, fecha, fase]):
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": "Err"
+        }), 400
+
+    schema_errors = validate_schema(
+        PartidoUpdateSchema,
+        id=id,
+        equipo_local=equipo_local,
+        equipo_visitante=equipo_visitante,
+        fecha=fecha,
+        fase=fase
+    )
+    if schema_errors:
+        return ReturnErrors(*schema_errors), 400
+
+    columns = []
+    params = []
+
+    if equipo_local is not None:
+        columns.append("equipo_local = %s")
+        params.append(equipo_local)
+    if equipo_visitante is not None:
+        columns.append("equipo_visitante = %s")
+        params.append(equipo_visitante)
+    if fecha is not None:
+        columns.append("fecha = %s")
+        params.append(fecha)
+    if fase is not None:
+        columns.append("fase = %s")
+        params.append(fase)
+
+    params.append(id)
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors({
+                "code": "Err",
+                "message": "Err",
+                "level": "Err",
+                "description": "Err"
+            }), 404
+
+            model.update_partido(cursor, columns, params)
+    except Exception as e:
+        return ReturnErrors({
+            "code": "Err",
+            "message": "Err",
+            "level": "Err",
+            "description": str(e)
+        }), 500
+    
+    return "", 204
 
 def eliminar_partido(id):
     if id is None:

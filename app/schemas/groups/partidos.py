@@ -15,15 +15,17 @@ PartidosQuerySchema = {
 
 PartidoBodySchema = {
     "fields": {
+        "id": IdSchema,
         "equipo_local": EquipoSchema,
         "equipo_visitante": EquipoSchema,
         "fecha": FechaSchema,
         "fase": FaseSchema,
     },
-    "required": ["equipo_local", "equipo_visitante", "fecha", "fase"]
+    "required": ["id", "equipo_local", "equipo_visitante", "fecha", "fase"]
 }
 
 PartidoUpdateSchema = {
+    "id": IdSchema,
     "equipo_local": EquipoSchema,
     "equipo_visitante": EquipoSchema,
     "fecha": FechaSchema,
