@@ -1,5 +1,15 @@
 from app.db import get_connection
 
+def obtener_usuarios():
+    conexion = get_connection()
+    cursor = conexion.cursor(dictionary=True)
+    query = "SELECT id_usuario as id, nombre FROM usuarios"
+    cursor.execute(query)
+    usuarios = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+    return usuarios
+
 def eliminar_usuario_db(id_usuario):
    conn = get_connection()
    cursor = conn.cursor()
@@ -38,7 +48,7 @@ def obtener_usuario_por_id(id_usuario):
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True)
     try:
-        query = "SELECT * FROM usuarios WHERE id_usuario = %s"
+        query = "SELECT id_usuario as id, nombre, email FROM usuarios WHERE id_usuario = %s"
         cursor.execute(query, (id_usuario,))
         usuario = cursor.fetchone()
         if usuario:

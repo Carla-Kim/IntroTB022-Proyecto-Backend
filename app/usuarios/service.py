@@ -1,4 +1,4 @@
-from app.usuarios.model import insertar_usuario, buscar_usuario_por_email, obtener_usuario_por_id, actualizar_usuario_db, eliminar_usuario_db
+from app.usuarios.model import insertar_usuario, buscar_usuario_por_email, obtener_usuario_por_id, actualizar_usuario_db, eliminar_usuario_db, obtener_usuarios
 
 def eliminar_usuario_service(id_usuario):
    return eliminar_usuario_db(id_usuario)
@@ -25,3 +25,8 @@ def reemplazar_usuario_id(id_usuario, nuevo_nombre, nuevo_email):
         "email": nuevo_email
     }
 
+def listar_usuarios_service():
+    return obtener_usuarios()
+
+def obtener_usuario_id_service(id_usuario):
+    return obtener_usuario_id(id_usuario)

@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.usuarios.service import eliminar_usuario_service
-from app.usuarios.service import crear_usuario_service, reemplazar_usuario_id
+from app.usuarios.service import eliminar_usuario_service, obtener_usuario_id_service, listar_usuarios_service, crear_usuario_service, reemplazar_usuario_id
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
@@ -45,4 +44,27 @@ def reemplazar_usuario(id_usuario):
     
     return jsonify(resultado), 200
 
+@usuarios_bp.route('/usuarios', methods=['GET'])
+def listar_usuarios():
+ try:
+    listado = listar_usuarios_service()
 
+    if not listado:
+        return '', 204
+    return jsonify({"usuarios": listado}), 200
+ 
+ except Exception as e:
+    return jsonify({"mensaje": "Error interno del servidor"}), 500
+ 
+
+@usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['GET'])
+def obtener_usuario_id(id_usuario):
+    try:
+       usuario = obtener_usuario_id_service(id_usuario)
+       
+       if usuario is None:
+          return jsonify({"mensaje": "Usuario no encontrado"}), 404
+       return jsonify(usuario), 200
+    
+    except Exception as e:
+       return jsonify({"mensaje": "Error interno del servidor"}), 500
