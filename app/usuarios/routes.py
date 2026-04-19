@@ -15,7 +15,7 @@ def listar_usuarios():
     return jsonify({"usuarios": listado}), 200
  
  except Exception as e:
-    return jsonify({"mensaje": "Error interno del servidor"}), 500
+    return jsonify({"mensaje": "Error interno del servidor"}), ReturnErrors(500)
 
 # Crear usuario. --Neithan
 @usuarios_bp.route('/usuarios', methods=['POST'])
@@ -32,11 +32,12 @@ def obtener_usuario_id(id_usuario):
        usuario = service.obtener_usuario_id_service(id_usuario)
        
        if usuario is None:
-          return jsonify({"mensaje": "Usuario no encontrado"}), 404
+          return jsonify({"mensaje": "Usuario no encontrado"}), ReturnErrors(404)
+       
        return jsonify(usuario), 200
     
     except Exception as e:
-       return jsonify({"mensaje": "Error interno del servidor"}), 500
+       return jsonify(ReturnErrors(500))
 
 # Reemplazar un usuario por ID. --Kevin
 @usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['PUT'])
@@ -44,12 +45,12 @@ def reemplazar_usuario(id_usuario):
     data = request.get_json()
     
     if not data or 'nombre' not in data or 'email' not in data:
-        return jsonify({"error": "Faltan datos obligatorios"}), 400
+        return jsonify(ReturnErrors(400)), 400
     
     resultado = service.reemplazar_usuario_id(id_usuario, data['nombre'], data['email'])
     
     if "error" in resultado:
-        return jsonify(resultado), 404
+        return jsonify(ReturnErrors(404)), 404
     
     return jsonify(resultado), 200
 
@@ -57,30 +58,15 @@ def reemplazar_usuario(id_usuario):
 @usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['DELETE'])
 def eliminar_usuario(id_usuario):
     try:
-       if id_usuario <= 0:
-            return jsonify(ReturnErrors({
-                "code": "400",
-                "message": "Bad Request",
-                "level": "error",
-                "description": "El id_usuario no puede ser menor a 0"
-            })), 400
+        if id_usuario <= 0:
+            return jsonify(ReturnErrors(400)), 400
         
-       fue_eliminado = service.eliminar_usuario_service(id_usuario)
+        fue_eliminado = service.eliminar_usuario_service(id_usuario)
      
-       if fue_eliminado:
-          return '', 204
+        if fue_eliminado:
+            return '', 204
 
-       return jsonify(ReturnErrors({
-          "code": "404",
-          "message": "Not Found",
-          "level": "error",
-          "description": "No existe ese usuario"
-         })), 404
+        return jsonify(ReturnErrors(404)), 404
  
     except Exception as e:
-         return jsonify(ReturnErrors({
-            "code": "500",
-            "message": "Database Error",
-            "level": "error",
-            "description": str(e)
-        })), 500
+        return jsonify(ReturnErrors(500)), 500

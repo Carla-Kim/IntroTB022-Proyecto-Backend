@@ -33,7 +33,7 @@ def get_partido(partido_id):
     partido = service.get_partido_by_id(partido_id)
 
     if not partido:
-        return jsonify({"error": "Partido no encontrado"}), 404
+        return jsonify(ReturnErrors(404)), 404
    
     return jsonify(partido), 200
 
@@ -44,12 +44,7 @@ def put_partido(id):
     
     campos_req = ['equipo_local', 'equipo_visitante', 'fecha', 'fase']
     if not all(k in data for k in campos_req):
-        return jsonify(ReturnErrors({
-            "code": "400",
-            "message": "Bad Request",
-            "level": "error",
-            "description": "Faltan campos obligatorios en el body"
-        })), 400
+        return jsonify(ReturnErrors(400)), 400
         
     res = service.servicio_reemplazar(id, data)
     
@@ -57,19 +52,9 @@ def put_partido(id):
         return '', 204
     
     if res["error"]:
-        return jsonify(ReturnErrors({
-            "code": "500",
-            "message": "Database Error",
-            "level": "error",
-            "description": res["error"]
-        })), 500
+        return jsonify(ReturnErrors(500)), 500
     
-    return jsonify(ReturnErrors({
-        "code": "404",
-        "message": "Not Found",
-        "level": "error",
-        "description": f"No existe el partido con ID {id}"
-    })), 404
+    return jsonify(ReturnErrors(404)), 404
 
 
 # Actualizar parcialmente un partido por ID. --Carla
@@ -78,22 +63,12 @@ def patch_partido(id):
     data = request.json
     
     if not data:
-        return jsonify(ReturnErrors({
-            "code": "400",
-            "message": "Bad Request",
-            "level": "error",
-            "description": "No se proporcionaron datos para actualizar"
-        })), 400
+        return jsonify(ReturnErrors(400)), 400
         
     if service.servicio_parchear(id, data):
         return '', 204
     
-    return jsonify(ReturnErrors({
-        "code": "404",
-        "message": "Not Found",
-        "level": "error",
-        "description": f"No existe el partido con ID {id}"
-    })), 404
+    return jsonify(ReturnErrors(404)), 404
 
 # Actualizar resultados de un partido por ID. --John
 @partidos_bp.route("/partidos/<int:id>/resultado", methods=["PUT"])

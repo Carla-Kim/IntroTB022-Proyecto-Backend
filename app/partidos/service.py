@@ -4,6 +4,8 @@ from app.utils.errors import ReturnErrors
 from app.utils.pagination import build_links
 from app.utils.validations import validate_schema
 from app.schemas.groups.partidos import *
+from flask import jsonify
+
 
 def listar_partidos(base_url, args, limit, offset):
     equipo = args.get("equipo")
@@ -19,7 +21,7 @@ def listar_partidos(base_url, args, limit, offset):
         offset=offset
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return jsonify(ReturnErrors(400)), 400
 
     filters = "WHERE 1=1"
     params = []
@@ -41,12 +43,7 @@ def listar_partidos(base_url, args, limit, offset):
         with get_cursor() as cursor:
             data = model.fetch_partidos(cursor, filters, params_count, params_elems)
     except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+        return jsonify(ReturnErrors(500)), 500
 
     partidos = [{
         "id": d["id_partido"],
@@ -65,12 +62,7 @@ def listar_partidos(base_url, args, limit, offset):
 
 def crear_partido(data):
     if not data:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return jsonify(ReturnErrors(400)), 400
 
     equipo_local = data.get("equipo_local")
     equipo_visitante = data.get("equipo_visitante")
@@ -78,41 +70,26 @@ def crear_partido(data):
     fase = data.get("fase")
 
     if not all([equipo_local, equipo_visitante, fecha, fase]):
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return jsonify(ReturnErrors(400)), 400
 
     schema_errors = validate_schema(
-    PartidoBodySchema,
-    equipo_local=equipo_local,
-    equipo_visitante=equipo_visitante,
-    fecha=fecha,
-    fase=fase
+        PartidoBodySchema,
+        equipo_local=equipo_local,
+        equipo_visitante=equipo_visitante,
+        fecha=fecha,
+        fase=fase
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return jsonify(ReturnErrors(400)), 400
 
     if equipo_local == equipo_visitante:
-        ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return jsonify(ReturnErrors(400)), 400
 
     try:
         with get_cursor() as cursor:
             new_id = model.insert_partido(cursor, equipo_local, equipo_visitante, fecha, fase)
     except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+        return jsonify(ReturnErrors(500)), 500
 
     return {
         "id": new_id,
@@ -122,58 +99,15 @@ def crear_partido(data):
         "fase": fase
     }, 201
 
-def get_partido_by_id(partido_id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    query = "SELECT * FROM partidos WHERE id_partido = %s"
-    cursor.execute(query, (partido_id,))
-    row = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    if not row:
-        return None 
-
-    return model.formatear_partido(
-        id_partido=row['id_partido'],
-        local=row['equipo_local'],
-        visitante=row['equipo_visitante'],
-        fecha=row['fecha'],
-        fase=row['fase'],
-        goles_local=row['goles_local'],
-        goles_visitante=row['goles_visitante']
-    )
-
-def servicio_reemplazar(id_partido, data):
-    return model.db_reemplazar_partido(
-        id_partido, data['equipo_local'], data['equipo_visitante'], 
-        data['fecha'], data['fase']
-    )
-
-def servicio_parchear(id_partido, data):
-    return model.db_actualizar_parcial(id_partido, data)
-
 def actualizar_resultado(data, id):
     if not data:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return jsonify(ReturnErrors(400)), 400
 
     goles_local = data.get("goles_local")
     goles_visitante = data.get("goles_visitante")
 
     if goles_local is None or goles_visitante is None:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return jsonify(ReturnErrors(400)), 400
     
     schema_errors = validate_schema(
         ResultadoSchema,
@@ -181,25 +115,15 @@ def actualizar_resultado(data, id):
         goles_visitante=goles_visitante
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return jsonify(ReturnErrors(400)), 400
     
     try:
         with get_cursor() as cursor:
             updated = model.update_resultado(cursor, id, goles_local, goles_visitante)
     except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+        return jsonify(ReturnErrors(500)), 500
     
     if updated == 0:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 404
+        return jsonify(ReturnErrors(404)), 404
     
     return "", 204

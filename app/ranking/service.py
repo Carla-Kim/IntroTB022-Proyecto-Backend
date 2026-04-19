@@ -4,6 +4,7 @@ from app.utils.errors import ReturnErrors
 from app.utils.pagination import build_links
 from app.utils.validations import validate_schema
 from app.schemas.commons import PaginationSchema
+from flask import jsonify
 
 def listar_ranking(base_url, limit, offset):
     schema_errors = validate_schema(
@@ -12,18 +13,13 @@ def listar_ranking(base_url, limit, offset):
         offset=offset
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return jsonify(ReturnErrors(400)), 400
     
     try:
         with get_cursor() as cursor:
             data = model.fetch_ranking(cursor, limit, offset)
     except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+        return jsonify(ReturnErrors(500)), 500
     
     ranking = [{
         "id_usuario": d["id_usuario"],

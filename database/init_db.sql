@@ -56,3 +56,4 @@ INSERT INTO predicciones (id_usuario, id_partido, goles_local, goles_visitante) 
 (5, 3, 0, 1), /*3 puntos resultado exacto*/
 (6, 4, 2, 0), /*Sin resultados*/
 (7, 5, 1, 1); /*1 puntos resultado correcto*/
+
