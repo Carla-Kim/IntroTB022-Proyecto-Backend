@@ -158,3 +158,12 @@ def actualizando_resultado(data,id_partido):
         "proceso" : "existoso",
         "mensaje" : f"el partido {id_partido} actualizado {gol_local}-{gol_visitante}  "
     }
+
+def servicio_reemplazar(id_partido, data):
+    return model.db_reemplazar_partido(
+        id_partido, data['equipo_local'], data['equipo_visitante'], 
+        data['fecha'], data['fase']
+    )
+
+def servicio_parchear(id_partido, data):
+    return model.db_actualizar_parcial(id_partido, data)
