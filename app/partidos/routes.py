@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.partidos import service
+from app.utils import ReturnErrors
 
 partidos_bp = Blueprint("partidos", __name__)
 
@@ -33,6 +34,64 @@ def get_partido(partido_id):
    
     return jsonify(partido), 200
 
+#Reemplazar un partido por ID.
+@partidos_bp.route('/partidos/<int:id>', methods=['PUT'])
+def put_partido(id):
+    data = request.json
+    
+    campos_req = ['equipo_local', 'equipo_visitante', 'fecha', 'fase']
+    if not all(k in data for k in campos_req):
+        return jsonify(ReturnErrors({
+            "code": "400",
+            "message": "Bad Request",
+            "level": "error",
+            "description": "Faltan campos obligatorios en el body"
+        })), 400
+        
+    res = service.servicio_reemplazar(id, data)
+    
+    if res["exito"]:
+        return '', 204
+    
+    if res["error"]:
+        return jsonify(ReturnErrors({
+            "code": "500",
+            "message": "Database Error",
+            "level": "error",
+            "description": res["error"]
+        })), 500
+    
+    return jsonify(ReturnErrors({
+        "code": "404",
+        "message": "Not Found",
+        "level": "error",
+        "description": f"No existe el partido con ID {id}"
+    })), 404
+
+
+# Actualizar parcialmente un partido por ID.
+@partidos_bp.route('/partidos/<int:id>', methods=['PATCH'])
+def patch_partido(id):
+    data = request.json
+    
+    if not data:
+        return jsonify(ReturnErrors({
+            "code": "400",
+            "message": "Bad Request",
+            "level": "error",
+            "description": "No se proporcionaron datos para actualizar"
+        })), 400
+        
+    if service.servicio_parchear(id, data):
+        return '', 204
+    
+    return jsonify(ReturnErrors({
+        "code": "404",
+        "message": "Not Found",
+        "level": "error",
+        "description": f"No existe el partido con ID {id}"
+    })), 404
+
 # Actualizar resultados de un partido por ID. --John
 @partidos_bp.route("/partidos/<int:id>/resultado", methods=["PUT"])
 def actualizar_resultado(id):
@@ -40,6 +99,6 @@ def actualizar_resultado(id):
     updated, code = service.actualizar_resultado(data, id)
 
     if code == 204:
-        return "", 204
+        return "", code
 
     return jsonify(updated), code

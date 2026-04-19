@@ -146,6 +146,15 @@ def get_partido_by_id(partido_id):
         goles_visitante=row['goles_visitante']
     )
 
+def servicio_reemplazar(id_partido, data):
+    return model.db_reemplazar_partido(
+        id_partido, data['equipo_local'], data['equipo_visitante'], 
+        data['fecha'], data['fase']
+    )
+
+def servicio_parchear(id_partido, data):
+    return model.db_actualizar_parcial(id_partido, data)
+
 def actualizar_resultado(data, id):
     if not data:
         return ReturnErrors({
@@ -154,7 +163,7 @@ def actualizar_resultado(data, id):
             "level": "Err",
             "description": "Err"
         }), 400
-    
+
     goles_local = data.get("goles_local")
     goles_visitante = data.get("goles_visitante")
 
