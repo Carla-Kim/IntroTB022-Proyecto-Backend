@@ -38,7 +38,7 @@ def obtener_usuario_id(id_usuario):
     except Exception as e:
        return jsonify({"mensaje": "Error interno del servidor"}), 500
 
-# Reemplazar un usuario. --Kevin
+# Reemplazar un usuario por ID. --Kevin
 @usuarios_bp.route('/usuarios/<int:id_usuario>', methods=['PUT'])
 def reemplazar_usuario(id_usuario):
     data = request.get_json()

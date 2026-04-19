@@ -37,7 +37,7 @@ def get_partido(partido_id):
    
     return jsonify(partido), 200
 
-#Reemplazar un partido por ID.
+# Reemplazar un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PUT'])
 def put_partido(id):
     data = request.json
@@ -72,7 +72,7 @@ def put_partido(id):
     })), 404
 
 
-# Actualizar parcialmente un partido por ID.
+# Actualizar parcialmente un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PATCH'])
 def patch_partido(id):
     data = request.json
