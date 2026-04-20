@@ -5,7 +5,7 @@ from app.utils.errors import ReturnErrors
 partidos_bp = Blueprint("partidos", __name__)
 
 # Listar y/o filtrar partidos. --Luis
-@partidos_bp.route("/partidos", methods=["GET"])
+@partidos_bp.route('/partidos', methods=['GET'])
 def listar_partidos():
     base_url = request.base_url
     args = request.args.to_dict()
@@ -20,7 +20,7 @@ def listar_partidos():
     return jsonify(results), code
 
 # Crear un partido. --Luis
-@partidos_bp.route("/partidos", methods=["POST"])
+@partidos_bp.route('/partidos', methods=['POST'])
 def crear_partido():
     data = request.get_json()
     added, code = service.crear_partido(data)
@@ -35,7 +35,7 @@ def get_partido(partido_id):
     if not partido:
         return jsonify(ReturnErrors(404)), 404
    
-    return jsonify(partido), 200
+    return jsonify(result), code
 
 # Reemplazar un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PUT'])
@@ -56,11 +56,19 @@ def put_partido(id):
     
     return jsonify(ReturnErrors(404)), 404
 
+    if code == 204:
+        return "", code
+    
+    return jsonify(updated), code
 
 # Actualizar parcialmente un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PATCH'])
-def patch_partido(id):
-    data = request.json
+def actualizar_partido(id):
+    data = request.get_json()    
+    updated, code = service.actualizar_partido(data, id)
+
+    if code == 204:
+        return "", code
     
     if not data:
         return jsonify(ReturnErrors(400)), 400
@@ -71,7 +79,7 @@ def patch_partido(id):
     return jsonify(ReturnErrors(404)), 404
 
 # Actualizar resultados de un partido por ID. --John
-@partidos_bp.route("/partidos/<int:id>/resultado", methods=["PUT"])
+@partidos_bp.route('/partidos/<int:id>/resultado', methods=['PUT'])
 def actualizar_resultado(id):
     data = request.get_json()
     updated, code = service.actualizar_resultado(data, id)

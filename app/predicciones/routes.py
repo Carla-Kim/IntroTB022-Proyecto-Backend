@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify
 from app.predicciones import service
 from app.utils.errors import ReturnErrors
 
-predicciones_bp = Blueprint('predicciones', __name__)
+predicciones_bp = Blueprint("predicciones", __name__)
 
 # Registrar una predicción. --John
-@predicciones_bp.route("/partidos/<int:id_partido>/prediccion", methods=["POST"])
+@predicciones_bp.route('/partidos/<int:id_partido>/prediccion', methods=['POST'])
 def registrar_prediccion(id_partido):
     try:
         if id_partido <= 0:

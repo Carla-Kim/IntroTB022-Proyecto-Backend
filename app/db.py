@@ -1,11 +1,12 @@
 import mysql.connector
 from contextlib import contextmanager
-from app.config import Config
+from app.config import *
 
 pool = mysql.connector.pooling.MySQLConnectionPool(
     pool_name="mypool",
     pool_size=5,
-    **Config.DB_CONFIG
+    database=DB_NAME,
+    **DB_CONFIG
 )
 
 def get_connection():
