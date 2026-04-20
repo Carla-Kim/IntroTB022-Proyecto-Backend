@@ -118,7 +118,7 @@ http://localhost:5000
 ```
 
 ## Ejemplos de uso
-TODO
+Como ejemplo de uso tomaremos el endpoint /partidos con el método GET. La idea es, inicialmente, levantar nuestro servidor(en nuestro caso lo levantamos con docker, pero puede ser de otra manera). Luego, ejecutamos python app.py y nos vamos a postman. Dentro de postman, hacemos nuestra conexión con la base de datos, y en donde pone endpoint ponemos http://nuestropuerto/partido, y el método GET. Luego, tocamos "SEND" y nos devolverá, si hicimos las cosas bien, una resputas 200 OK, que fue por que nuestra petición resultó exitosa.
 
 ## Hipótesis evaluadas
 
