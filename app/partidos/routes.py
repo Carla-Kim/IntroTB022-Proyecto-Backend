@@ -28,17 +28,33 @@ def crear_partido():
     return jsonify(added), code
 
 # Obtener un partido por ID. --Kevin
-@partidos_bp.route('/partidos/<int:id>', methods=['GET'])
-def obtener_partido(id):
-    result, code = service.obtener_partido(id)
+@partidos_bp.route('/partidos/<int:partido_id>', methods=['GET'])
+def get_partido(partido_id):
+    partido = service.get_partido_by_id(partido_id)
+
+    if not partido:
+        return jsonify(ReturnErrors(404)), 404
    
     return jsonify(result), code
 
 # Reemplazar un partido por ID. --Carla
 @partidos_bp.route('/partidos/<int:id>', methods=['PUT'])
-def reemplazar_partido(id):
-    data = request.get_json()
-    updated, code = service.reemplazar_partido(data, id)
+def put_partido(id):
+    data = request.json
+    
+    campos_req = ['equipo_local', 'equipo_visitante', 'fecha', 'fase']
+    if not all(k in data for k in campos_req):
+        return jsonify(ReturnErrors(400)), 400
+        
+    res = service.servicio_reemplazar(id, data)
+    
+    if res["exito"]:
+        return '', 204
+    
+    if res["error"]:
+        return jsonify(ReturnErrors(500)), 500
+    
+    return jsonify(ReturnErrors(404)), 404
 
     if code == 204:
         return "", code
@@ -54,17 +70,13 @@ def actualizar_partido(id):
     if code == 204:
         return "", code
     
-    return jsonify(updated), code
-
-# Eliminar un partido por ID. --Neithan
-@partidos_bp.route('/partidos/<int:id>', methods=['DELETE'])
-def eliminar_usuario(id):
-    deleted, code = service.eliminar_partido(id)
+    if not data:
+        return jsonify(ReturnErrors(400)), 400
+        
+    if service.servicio_parchear(id, data):
+        return '', 204
     
-    if code == 204:
-        return "", 204
-
-    return jsonify(deleted), code
+    return jsonify(ReturnErrors(404)), 404
 
 # Actualizar resultados de un partido por ID. --John
 @partidos_bp.route('/partidos/<int:id>/resultado', methods=['PUT'])
