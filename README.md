@@ -62,7 +62,7 @@ cd <repo>
 ### 2. Crear entorno virtual
 
 ```bash
-python -m venv venv
+python -m venv .venv
 ```
 
 Activar:
@@ -101,14 +101,9 @@ DEBUG=True
 
 ### 5. Crear base de datos
 
-Ingresar a MySQL y ejecutar:
-
-```sql
-CREATE DATABASE fixture;
-USE fixture;
+```bash
+python -m database.init_db
 ```
-
-Luego ejecutar los scripts de creación de tablas provistos (`init_db.sql` o equivalente).
 
 ### 6. Ejecutar la aplicación
 

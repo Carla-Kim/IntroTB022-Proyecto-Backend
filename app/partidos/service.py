@@ -4,8 +4,6 @@ from app.utils.errors import ReturnErrors
 from app.utils.pagination import build_links
 from app.utils.validations import validate_schema
 from app.schemas.groups.partidos import *
-from flask import jsonify
-
 
 def listar_partidos(base_url, args, limit, offset):
     equipo = args.get("equipo")
@@ -21,7 +19,7 @@ def listar_partidos(base_url, args, limit, offset):
         offset=offset
     )
     if schema_errors:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
 
     filters = "WHERE 1=1"
     params = []
@@ -42,8 +40,8 @@ def listar_partidos(base_url, args, limit, offset):
     try:
         with get_cursor() as cursor:
             data = model.fetch_partidos(cursor, filters, params_count, params_elems)
-    except Exception as e:
-        return jsonify(ReturnErrors(500)), 500
+    except Exception:
+        return ReturnErrors(500), 500
 
     partidos = [{
         "id": d["id_partido"],
@@ -62,7 +60,7 @@ def listar_partidos(base_url, args, limit, offset):
 
 def crear_partido(data):
     if not data:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
 
     equipo_local = data.get("equipo_local")
     equipo_visitante = data.get("equipo_visitante")
@@ -70,7 +68,7 @@ def crear_partido(data):
     fase = data.get("fase")
 
     if not all([equipo_local, equipo_visitante, fecha, fase]):
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
 
     schema_errors = validate_schema(
         PartidoBodySchema,
@@ -80,16 +78,16 @@ def crear_partido(data):
         fase=fase
     )
     if schema_errors:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
 
     if equipo_local == equipo_visitante:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
 
     try:
         with get_cursor() as cursor:
             new_id = model.insert_partido(cursor, equipo_local, equipo_visitante, fecha, fase)
-    except Exception as e:
-        return jsonify(ReturnErrors(500)), 500
+    except Exception:
+        return ReturnErrors(500), 500
 
     return {
         "id": new_id,
@@ -99,15 +97,162 @@ def crear_partido(data):
         "fase": fase
     }, 201
 
+def obtener_partido(id):
+    if id is None:
+        return ReturnErrors(400), 400
+    
+    schema_errors = validate_schema(IdSchema, id=id)
+    if schema_errors:
+        return ReturnErrors(400), 400
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors(404), 404
+
+            result = model.fetch_partido(cursor, id)
+    except Exception:
+        return ReturnErrors(500), 500
+    
+    partido = {
+        "id": result["id_partido"],
+        "equipo_local": result["equipo_local"],
+        "equipo_visitante": result["equipo_visitante"],
+        "fecha": str(result["fecha"]),
+        "fase": result["fase"],
+        "resultado": {"local": result["goles_local"], "visitante": result["goles_visitante"]}
+    }
+
+    return partido, 200
+
+def reemplazar_partido(data, id):
+    if not data:
+        return ReturnErrors(400), 400
+    
+    equipo_local = data.get("equipo_local")
+    equipo_visitante = data.get("equipo_visitante")
+    fecha = data.get("fecha")
+    fase = data.get("fase")
+
+    if not all([equipo_local, equipo_visitante, fecha, fase]):
+        return ReturnErrors(400), 400
+
+    schema_errors = validate_schema(
+        PartidoBodySchema,
+        id=id,
+        equipo_local=equipo_local,
+        equipo_visitante=equipo_visitante,
+        fecha=fecha,
+        fase=fase
+    )
+    if schema_errors:
+        return ReturnErrors(400), 400
+
+    columns = [
+        "equipo_local = %s",
+        "equipo_visitante = %s",
+        "fecha = %s",
+        "fase = %s"
+    ]
+    params = [equipo_local, equipo_visitante, fecha, fase, id]
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors(404), 404
+
+            model.update_partido(cursor, columns, params)
+    except Exception:
+        return ReturnErrors(500), 500
+    
+    return "", 204
+
+def actualizar_partido(data, id):
+    if not data:
+        return ReturnErrors(400), 400
+    
+    equipo_local = data.get("equipo_local")
+    equipo_visitante = data.get("equipo_visitante")
+    fecha = data.get("fecha")
+    fase = data.get("fase")
+
+    if not any([equipo_local, equipo_visitante, fecha, fase]):
+        return ReturnErrors(400), 400
+
+    schema_errors = validate_schema(
+        PartidoUpdateSchema,
+        id=id,
+        equipo_local=equipo_local,
+        equipo_visitante=equipo_visitante,
+        fecha=fecha,
+        fase=fase
+    )
+    if schema_errors:
+        return ReturnErrors(400), 400
+
+    columns = []
+    params = []
+
+    if equipo_local is not None:
+        columns.append("equipo_local = %s")
+        params.append(equipo_local)
+    if equipo_visitante is not None:
+        columns.append("equipo_visitante = %s")
+        params.append(equipo_visitante)
+    if fecha is not None:
+        columns.append("fecha = %s")
+        params.append(fecha)
+    if fase is not None:
+        columns.append("fase = %s")
+        params.append(fase)
+
+    params.append(id)
+
+    try:
+        with get_cursor() as cursor:
+            exists_id = model.check_by_id(cursor, id)
+
+            if not exists_id:
+                return ReturnErrors(404), 404
+
+            model.update_partido(cursor, columns, params)
+    except Exception:
+        return ReturnErrors(500), 500
+    
+    return "", 204
+
+def eliminar_partido(id):
+    if id is None:
+        return ReturnErrors(400), 400
+    
+    schema_errors = validate_schema(IdSchema, id=id)
+    if schema_errors:
+        return ReturnErrors(400), 400
+
+    try:
+        with get_cursor() as cursor:
+            deleted = model.delete_partido(cursor, id)
+    except Exception:
+        return ReturnErrors(500), 500
+    
+    if deleted == 0:
+        return ReturnErrors(404), 404
+    
+    return "", 204
+
 def actualizar_resultado(data, id):
     if not data:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
 
     goles_local = data.get("goles_local")
     goles_visitante = data.get("goles_visitante")
 
     if goles_local is None or goles_visitante is None:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
     
     schema_errors = validate_schema(
         ResultadoSchema,
@@ -115,15 +260,15 @@ def actualizar_resultado(data, id):
         goles_visitante=goles_visitante
     )
     if schema_errors:
-        return jsonify(ReturnErrors(400)), 400
+        return ReturnErrors(400), 400
     
     try:
         with get_cursor() as cursor:
             updated = model.update_resultado(cursor, id, goles_local, goles_visitante)
-    except Exception as e:
-        return jsonify(ReturnErrors(500)), 500
+    except Exception:
+        return ReturnErrors(500), 500
     
     if updated == 0:
-        return jsonify(ReturnErrors(404)), 404
+        return ReturnErrors(404), 404
     
     return "", 204
