@@ -12,18 +12,13 @@ def listar_usuarios(base_url, limit, offset):
         offset=offset
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return ReturnErrors(400), 400
 
     try:
         with get_cursor() as cursor:
             data = model.fetch_usuarios(cursor, limit, offset)
-    except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+    except Exception:
+        return ReturnErrors(500), 500
 
     usuarios = [{
         "id": d["id_usuario"],
@@ -39,23 +34,13 @@ def listar_usuarios(base_url, limit, offset):
 
 def crear_usuario(data):
     if not data:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return ReturnErrors(400), 400
 
     nombre = data.get("nombre")
     email = data.get("email")
     
     if not nombre or not email:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return ReturnErrors(400), 400
 
     schema_errors = validate_schema(
         UsuarioBodySchema,
@@ -63,28 +48,18 @@ def crear_usuario(data):
         email=email
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return ReturnErrors(400), 400
 
     try:
         with get_cursor() as cursor:
             exists_email = model.check_by_email(cursor, email)
 
             if exists_email:
-                return ReturnErrors({
-                    "code": "Err",
-                    "message": "Err",
-                    "level": "Err",
-                    "description": "Err"
-                }), 409
+                return ReturnErrors(409), 409
 
             new_id = model.insert_usuario(cursor, nombre, email)
-    except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+    except Exception:
+        return ReturnErrors(500), 500
 
     return {
         "id": new_id,
@@ -94,37 +69,22 @@ def crear_usuario(data):
 
 def obtener_usuario(id):
     if id is None:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return ReturnErrors(400), 400
     
     schema_errors = validate_schema(IdSchema, id=id)
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return ReturnErrors(400), 400
 
     try:
         with get_cursor() as cursor:
             exists_id = model.check_by_id(cursor, id)
 
             if not exists_id:
-                return ReturnErrors({
-                "code": "Err",
-                "message": "Err",
-                "level": "Err",
-                "description": "Err"
-            }), 404
+                return ReturnErrors(404), 404
 
             result = model.fetch_usuario(cursor, id)
-    except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+    except Exception:
+        return ReturnErrors(500), 500
     
     usuario = {
         "id": result["id_usuario"],
@@ -136,23 +96,13 @@ def obtener_usuario(id):
 
 def reemplazar_usuario(data, id):
     if not data:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return ReturnErrors(400), 400
     
     nombre = data.get("nombre")
     email = data.get("email")
 
     if not all([nombre, email]):
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return ReturnErrors(400), 400
     
     schema_errors = validate_schema(
         UsuarioBodySchema,
@@ -161,61 +111,36 @@ def reemplazar_usuario(data, id):
         email=email
     )
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return ReturnErrors(400), 400
 
     try:
         with get_cursor() as cursor:
             exists_id = model.check_by_id(cursor, id)
 
             if not exists_id:
-                return ReturnErrors({
-                "code": "Err",
-                "message": "Err",
-                "level": "Err",
-                "description": "Err"
-            }), 404
+                return ReturnErrors(404), 404
 
             model.update_usuario(cursor, id, nombre, email)
-    except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+    except Exception:
+        return ReturnErrors(500), 500
 
     return "", 204
 
 def eliminar_usuario(id):
     if id is None:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 400
+        return ReturnErrors(400), 400
     
     schema_errors = validate_schema(IdSchema, id=id)
     if schema_errors:
-        return ReturnErrors(*schema_errors), 400
+        return ReturnErrors(400), 400
 
     try:
         with get_cursor() as cursor:
             deleted = model.delete_usuario(cursor, id)
-    except Exception as e:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": str(e)
-        }), 500
+    except Exception:
+        return ReturnErrors(500), 500
     
     if deleted == 0:
-        return ReturnErrors({
-            "code": "Err",
-            "message": "Err",
-            "level": "Err",
-            "description": "Err"
-        }), 404
+        return ReturnErrors(404), 404
     
     return "", 204
