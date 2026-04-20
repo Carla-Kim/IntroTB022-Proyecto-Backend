@@ -50,16 +50,16 @@ Este ejercicio simula un escenario real de desarrollo backend:
 
 - app.py será el script principal para arrancar la aplicación. 
 
-# Instrucciones de ejecución
+## Instrucciones de ejecución
 
-## 1. Clonar el repositorio
+### 1. Clonar el repositorio
 
 ```bash
 git clone <repo_url>
 cd <repo>
 ```
 
-## 2. Crear entorno virtual
+### 2. Crear entorno virtual
 
 ```bash
 python -m venv venv
@@ -79,13 +79,13 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-## 3. Instalar dependencias
+### 3. Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4. Configurar variables de entorno
+### 4. Configurar variables de entorno
 
 Crear un archivo `.env` en la raíz del proyecto:
 
@@ -99,7 +99,7 @@ PORT=5000
 DEBUG=True
 ```
 
-## 5. Crear base de datos
+### 5. Crear base de datos
 
 Ingresar a MySQL y ejecutar:
 
@@ -110,7 +110,7 @@ USE fixture;
 
 Luego ejecutar los scripts de creación de tablas provistos (`init_db.sql` o equivalente).
 
-## 6. Ejecutar la aplicación
+### 6. Ejecutar la aplicación
 
 ```bash
 python app/app.py
@@ -122,10 +122,10 @@ La API estará disponible en:
 http://localhost:5000
 ```
 
-# Ejemplos de uso
+## Ejemplos de uso
+TODO
 
-
-# Hipótesis evaluadas
+## Hipótesis evaluadas
 
 * Se asume que los IDs son autoincrementales y únicos.
 * Se considera que un partido puede no tener resultado al momento de su creación.
